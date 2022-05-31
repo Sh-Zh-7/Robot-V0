@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import shzh.me.commands.handleDice
 import shzh.me.commands.handlePing
 
 fun Application.configureRouting() {
@@ -23,6 +24,7 @@ fun Application.configureRouting() {
 
                     when {
                         msg == "/ping" -> handlePing(call)
+                        "/dice" in msg -> handleDice(call, msg)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")
