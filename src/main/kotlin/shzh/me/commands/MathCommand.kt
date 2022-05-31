@@ -15,7 +15,7 @@ suspend fun handleMath(call: ApplicationCall, command: String) {
     val escaped = HtmlEscape.unescapeHtml(expr)
     val script = listOf("wolframscript", "-code", escaped)
 
-    val proc: Process;
+    val proc: Process
     withContext(Dispatchers.IO) {
         proc = ProcessBuilder(script)
             .redirectOutput(ProcessBuilder.Redirect.PIPE)

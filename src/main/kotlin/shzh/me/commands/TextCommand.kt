@@ -17,11 +17,11 @@ suspend fun handleDice(call: ApplicationCall, command: String) {
     val (_, rule) = command.split(' ')
     val (number, count) = rule.split('d').map { str -> Integer.parseInt(str) }
 
-    val dices  = (0 until number).map { _ -> (0..count).random() }
+    val dices  = (0 until number).map { (0..count).random() }
     val sum = dices.sum()
     val diceStr = dices.map { dice -> dice.toString() }.reduce { acc, s -> "$acc $s" }
 
-    val reply = "您的点数为: $diceStr；\\n总计: $sum";
+    val reply = "您的点数为: $diceStr；\\n总计: $sum"
     val res = Json.encodeToString(reply)
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
