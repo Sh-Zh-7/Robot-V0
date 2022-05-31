@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import shzh.me.model.BvInfo
+import shzh.me.model.bo.BvInfo
 
 val format = Json { ignoreUnknownKeys = true }
 

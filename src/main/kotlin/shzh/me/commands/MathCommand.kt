@@ -5,6 +5,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.unbescape.html.HtmlEscape
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +27,7 @@ suspend fun handleMath(call: ApplicationCall, command: String) {
 
     val result = proc.inputStream.bufferedReader().readText()
 
-    val reply = "{\"reply\": \"结果为：${result.trim()}\\nWolfram强力驱动\"}"
-    call.respondText(reply, ContentType.Application.Json, HttpStatusCode.OK)
+    val reply = "结果为：${result.trim()}\\nWolfram强力驱动"
+    val res = Json.encodeToString(reply)
+    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }

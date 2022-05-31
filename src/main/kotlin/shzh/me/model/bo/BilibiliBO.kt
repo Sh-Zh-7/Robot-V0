@@ -1,4 +1,4 @@
-package shzh.me.model
+package shzh.me.model.bo
 
 import kotlinx.serialization.Serializable
 
