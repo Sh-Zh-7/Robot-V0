@@ -9,18 +9,20 @@ data class BvInfo(val data: BvData) {
 
 @Serializable
 data class BvData(
+    val pic: String,
     val bvid: String,
     val aid: Long,
     val title: String,
     val desc: String,
     val owner: BvOwner
 ) {
-    override fun toString(): String = """传送门：bilibili.com/av$aid
+    override fun toString(): String = """[CQ:image,file=$pic]
+        |传送门：bilibili.com/av$aid
         |BV号：$bvid
         |AV号：$aid
         |标题：$title
         |简介：$desc
-        |UP主：$owner""".trimMargin().replace("\n", "\\n")
+        |UP主：$owner""".trimMargin()
 }
 
 @Serializable
