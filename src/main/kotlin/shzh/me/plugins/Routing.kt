@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import shzh.me.commands.handlePing
 
 fun Application.configureRouting() {
     routing {
@@ -19,9 +20,9 @@ fun Application.configureRouting() {
             when (postType) {
                 "message" -> {
                     val msg = bodyJson.jsonObject["message"]!!.jsonPrimitive.content
-                    if (msg == "/ping") {
-                        val res = "{\"reply\": \"pong!\"}"
-                        call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+
+                    when {
+                        msg == "/ping" -> handlePing(call)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")
