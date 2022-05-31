@@ -8,8 +8,7 @@ import kotlinx.serialization.json.Json
 import shzh.me.model.vo.GroupReplyVO
 
 suspend fun handlePing(call: ApplicationCall) {
-    val ret = GroupReplyVO("pong!")
-    val res = Json.encodeToString(ret)
+    val res = Json.encodeToString(GroupReplyVO("pong!"))
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
 
@@ -21,7 +20,7 @@ suspend fun handleDice(call: ApplicationCall, command: String) {
     val sum = dices.sum()
     val diceStr = dices.map { dice -> dice.toString() }.reduce { acc, s -> "$acc $s" }
 
-    val reply = "您的点数为: $diceStr；\\n总计: $sum"
-    val res = Json.encodeToString(reply)
+    val reply = "您的点数为: $diceStr；\n总计: $sum"
+    val res = Json.encodeToString(GroupReplyVO(reply))
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }

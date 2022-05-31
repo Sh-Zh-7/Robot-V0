@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.unbescape.html.HtmlEscape
+import shzh.me.model.vo.GroupReplyVO
 import java.util.concurrent.TimeUnit
 
 suspend fun handleMath(call: ApplicationCall, command: String) {
@@ -28,6 +29,6 @@ suspend fun handleMath(call: ApplicationCall, command: String) {
     val result = proc.inputStream.bufferedReader().readText()
 
     val reply = "结果为：${result.trim()}\\nWolfram强力驱动"
-    val res = Json.encodeToString(reply)
+    val res = Json.encodeToString(GroupReplyVO(reply))
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
