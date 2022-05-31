@@ -6,10 +6,7 @@ import io.ktor.server.request.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import shzh.me.commands.handleDice
-import shzh.me.commands.handlePing
-import shzh.me.commands.handleBvInfo
-import shzh.me.commands.handleMath
+import shzh.me.commands.*
 
 fun Application.configureRouting() {
     routing {
