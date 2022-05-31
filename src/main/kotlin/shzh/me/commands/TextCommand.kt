@@ -4,6 +4,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 
+suspend fun handlePing(call: ApplicationCall) {
+    val res = "{\"reply\": \"pong!\"}"
+    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+}
+
 suspend fun handleDice(call: ApplicationCall, command: String) {
     val (_, rule) = command.split(' ')
     val (number, count) = rule.split('d').map { str -> Integer.parseInt(str) }
@@ -14,6 +19,5 @@ suspend fun handleDice(call: ApplicationCall, command: String) {
 
     val reply = "您的点数为: $diceStr；\\n总计: $sum";
     val result = "{\"reply\": \"$reply\"}"
-    println(result)
     call.respondText(result, ContentType.Application.Json, HttpStatusCode.OK)
 }
