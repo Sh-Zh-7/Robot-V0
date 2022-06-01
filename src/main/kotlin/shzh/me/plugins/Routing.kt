@@ -25,6 +25,7 @@ fun Application.configureRouting() {
                         "/bv" in msg -> handleBvInfo(call, msg, "bvid")
                         "/dice" in msg -> handleDice(call, msg)
                         "/math" in msg -> handleMath(call, msg)
+                        "https://github.com/" in msg -> handleGithub(call, msg)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")
