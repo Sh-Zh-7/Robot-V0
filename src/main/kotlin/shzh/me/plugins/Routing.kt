@@ -29,7 +29,7 @@ fun Application.configureRouting() {
                         "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)
                         "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
-                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message)
+                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message, msg.sender.userID)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")
