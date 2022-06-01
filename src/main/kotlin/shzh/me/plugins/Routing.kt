@@ -26,6 +26,7 @@ fun Application.configureRouting() {
                         "/dice" in msg -> handleDice(call, msg)
                         "/math" in msg -> handleMath(call, msg)
                         "https://github.com/" in msg -> handleGithub(call, msg)
+                         msg matches Regex("\\[CQ:reply,id=(-?\\d+)]撤回") -> handleCallback(msg)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")
