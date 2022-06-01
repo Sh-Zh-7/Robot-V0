@@ -3,10 +3,14 @@ package shzh.me.plugins
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import shzh.me.commands.*
+import shzh.me.model.dto.MessageDTO
+
+val format = Json { ignoreUnknownKeys = true }
 
 fun Application.configureRouting() {
     routing {
@@ -17,16 +21,16 @@ fun Application.configureRouting() {
 
             when (postType) {
                 "message" -> {
-                    val msg = bodyJson.jsonObject["message"]!!.jsonPrimitive.content
+                    val msg = format.decodeFromString<MessageDTO>(body)
 
                     when {
-                        msg == "/ping" -> handlePing(call)
-                        "/av" in msg -> handleBvInfo(call, msg, "aid")
-                        "/bv" in msg -> handleBvInfo(call, msg, "bvid")
-                        "/dice" in msg -> handleDice(call, msg)
-                        "/math" in msg -> handleMath(call, msg)
-                        "https://github.com/" in msg -> handleGithub(call, msg)
-                         msg matches Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") -> handleCallback(msg)
+                        msg.message == "/ping" -> handlePing(call, msg.messageID)
+                        "/av" in msg.message -> handleBvInfo(call, msg.message, "aid")
+                        "/bv" in msg.message -> handleBvInfo(call, msg.message, "bvid")
+                        "/dice" in msg.message -> handleDice(call, msg.message, msg.messageID)
+                        "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
+                        "https://github.com/" in msg.message -> handleGithub(call, msg.message)
+                         msg.message matches Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") -> handleCallback(msg.message)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")

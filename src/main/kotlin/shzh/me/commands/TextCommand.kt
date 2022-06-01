@@ -7,20 +7,22 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import shzh.me.model.vo.GroupReplyVO
 
-suspend fun handlePing(call: ApplicationCall) {
-    val res = Json.encodeToString(GroupReplyVO("pong!"))
+suspend fun handlePing(call: ApplicationCall, messageID: Int) {
+    val res = Json.encodeToString(GroupReplyVO("[CQ:reply,id=$messageID]pong!"))
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
 
-suspend fun handleDice(call: ApplicationCall, command: String) {
+suspend fun handleDice(call: ApplicationCall, command: String, messageID: Int) {
     val (_, rule) = command.split(' ')
     val (number, count) = rule.split('d').map { str -> Integer.parseInt(str) }
 
-    val dices  = (0 until number).map { (0..count).random() }
-    val sum = dices.sum()
-    val diceStr = dices.map { dice -> dice.toString() }.reduce { acc, s -> "$acc $s" }
+    if (number <= 10) {
+        val dices  = (0 until number).map { (0..count).random() }
+        val sum = dices.sum()
+        val diceStr = dices.map { dice -> dice.toString() }.reduce { acc, s -> "$acc $s" }
 
-    val reply = "您的点数为: $diceStr；\n总计: $sum"
-    val res = Json.encodeToString(GroupReplyVO(reply))
-    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+        val reply = "[CQ:reply,id=$messageID]您的点数为: $diceStr；\n总计: $sum"
+        val res = Json.encodeToString(GroupReplyVO(reply))
+        call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+    }
 }

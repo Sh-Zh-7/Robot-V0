@@ -13,6 +13,5 @@ suspend fun handleBvInfo(call: ApplicationCall, command: String, type: String) {
     val info = getVideoInfo(av, type)
 
     val res = Json.encodeToString(GroupReplyVO(info.toString()))
-    println(res)
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
