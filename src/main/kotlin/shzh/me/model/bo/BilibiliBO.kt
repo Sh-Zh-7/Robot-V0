@@ -17,7 +17,7 @@ data class BvData(
     val owner: BvOwner
 ) {
     override fun toString(): String = """[CQ:image,file=$pic]
-        |传送门：bilibili.com/av$aid
+        |传送门：bilibili.com/video/$bvid
         |BV号：$bvid
         |AV号：$aid
         |标题：$title

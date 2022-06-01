@@ -24,13 +24,12 @@ fun Application.configureRouting() {
                     val msg = format.decodeFromString<MessageDTO>(body)
 
                     when {
-                        msg.message == "/ping" -> handlePing(call, msg.messageID)
-                        "/av" in msg.message -> handleBvInfo(call, msg.message, "aid")
-                        "/bv" in msg.message -> handleBvInfo(call, msg.message, "bvid")
+                        "/ping" == msg.message -> handlePing(call, msg.messageID)
                         "/dice" in msg.message -> handleDice(call, msg.message, msg.messageID)
                         "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)
-                         msg.message matches Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") -> handleCallback(msg.message)
+                        "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
+                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message)
                     }
                 }
                 "meta_event" -> println("Heartbeat package received!")

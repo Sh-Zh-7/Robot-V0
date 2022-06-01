@@ -12,7 +12,7 @@ import shzh.me.model.bo.BvInfo
 
 val format = Json { ignoreUnknownKeys = true }
 
-suspend fun getVideoInfo(av: String, type: String): BvInfo {
+suspend fun getVideoInfo(bv: String): BvInfo {
     val client = HttpClient(CIO) {
         defaultRequest {
             url {
@@ -23,7 +23,7 @@ suspend fun getVideoInfo(av: String, type: String): BvInfo {
     }
 
     val response = client.get("view") {
-        url { parameters.append(type, av) }
+        url { parameters.append("bvid", bv) }
     }.body<String>()
 
     return format.decodeFromString(response)

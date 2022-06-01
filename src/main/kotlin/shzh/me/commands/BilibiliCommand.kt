@@ -8,9 +8,11 @@ import kotlinx.serialization.json.Json
 import shzh.me.model.vo.GroupReplyVO
 import shzh.me.services.getVideoInfo
 
-suspend fun handleBvInfo(call: ApplicationCall, command: String, type: String) {
-    val av = command.substringAfter(' ')
-    val info = getVideoInfo(av, type)
+suspend fun handleBvInfo(call: ApplicationCall, command: String) {
+    val regex = Regex("https://www\\.bilibili\\.com/video/BV(\\w{10})")
+    val match = regex.find(command)!!
+    val bv = match.groupValues[1]
+    val info = getVideoInfo(bv)
 
     val res = Json.encodeToString(GroupReplyVO(info.toString()))
     call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
