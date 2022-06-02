@@ -1,17 +1,20 @@
 package shzh.me.commands
 
+import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.doInfinity
+import dev.inmo.krontab.utils.asFlow
+import dev.inmo.krontab.utils.asTzFlow
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.subscribe
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import shzh.me.model.bo.BLiveInfo
 import shzh.me.model.vo.GroupReplyVO
-import shzh.me.services.getBLiveCoverByUID
-import shzh.me.services.getBLiveInfo
-import shzh.me.services.getVideoInfo
-import shzh.me.services.sendGroupMessage
+import shzh.me.services.*
 
 var bLivePooling = true
 
@@ -31,15 +34,18 @@ suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long) {
 
     when (op) {
         "subscribe" -> handleBLiveSub(call, liveID, groupID)
-        "unsubscribe" -> handleBLiveUnsub(call, liveID, groupID)
+        "unsubscribe" -> handleBLiveUnsub(liveID, groupID)
     }
 }
 
 private suspend fun handleBLiveSub(call: ApplicationCall, liveID: String, groupID: Long) {
     call.respondText("")    // No reply
+
+    // Persistent
+    subscribeBVStreamer(liveID.toLong(), groupID)
+    // Pooling
     var oldStatus = 0
     var liveInfo: BLiveInfo
-
     doInfinity("/10 * * * *") {
         if (bLivePooling) {
             liveInfo = getBLiveInfo(liveID)
@@ -52,6 +58,9 @@ private suspend fun handleBLiveSub(call: ApplicationCall, liveID: String, groupI
     }
 }
 
-private suspend fun handleBLiveUnsub(call: ApplicationCall, liveID: String, groupID: Long) {
+private fun handleBLiveUnsub(liveID: String, groupID: Long) {
+    // delete from database
+    unsubscribeBVStreamer(liveID.toLong(), groupID)
+    // Disable pooling
     bLivePooling = false
 }

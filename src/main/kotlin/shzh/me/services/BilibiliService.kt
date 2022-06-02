@@ -9,9 +9,12 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.ktorm.dsl.*
 import shzh.me.model.DataWrapper
 import shzh.me.model.bo.BLiveInfo
 import shzh.me.model.bo.BvData
+import shzh.me.model.dao.GroupSubBVStreamer
+import shzh.me.model.dao.db
 
 val format = Json { ignoreUnknownKeys = true }
 
@@ -58,4 +61,21 @@ suspend fun getBLiveCoverByUID(userID: Long): Pair<String, String> {
     val username = bLiveJson.jsonObject["uname"]!!.jsonPrimitive.content
 
     return Pair(cover, username)
+}
+
+fun listBVStreamer(groupID: Long) {
+    db.from(GroupSubBVStreamer).select()
+}
+
+fun subscribeBVStreamer(groupID: Long, liveID: Long) {
+    db.insert(GroupSubBVStreamer) {
+        set(it.groupID, groupID)
+        set(it.liveID, liveID)
+    }
+}
+
+fun unsubscribeBVStreamer(groupID: Long, liveID: Long) {
+    db.delete(GroupSubBVStreamer) {
+        (it.groupID eq groupID) and (it.liveID eq liveID)
+    }
 }
