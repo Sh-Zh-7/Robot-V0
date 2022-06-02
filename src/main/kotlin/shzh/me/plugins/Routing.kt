@@ -1,5 +1,6 @@
 package shzh.me.plugins
 
+import dev.inmo.krontab.doInfinity
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -27,6 +28,7 @@ fun Application.configureRouting() {
                         "/ping" == msg.message -> handlePing(call, msg.messageID)
                         "/dice" in msg.message -> handleDice(call, msg.message, msg.messageID)
                         "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
+                        "/blive" in msg.message -> handleBLive(call, msg.message, msg.groupID)
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)
                         "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
                         Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message, msg.sender.userID)

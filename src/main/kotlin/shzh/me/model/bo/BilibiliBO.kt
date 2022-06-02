@@ -4,11 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BvInfo(val data: BvData) {
-    override fun toString(): String = data.toString()
-}
-
-@Serializable
 data class BvData(
     val pic: String,
     val bvid: String,
@@ -32,7 +27,7 @@ data class BvOwner(val name: String) {
 }
 
 @Serializable
-data class LiveInfo(
+data class BLiveInfo(
     @SerialName("live_status")
-    val liveStatus: Int
+    val liveStatus: Int,
 )

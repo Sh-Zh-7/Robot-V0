@@ -10,6 +10,9 @@ data class MessageDTO(
     @SerialName("message_id")
     val messageID: Int,
 
+    @SerialName("group_id")
+    val groupID: Long,
+
     val sender: Sender,
 )
 
