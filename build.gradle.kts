@@ -30,6 +30,7 @@ dependencies {
     implementation("org.unbescape:unbescape:1.1.6.RELEASE")
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("org.seleniumhq.selenium:selenium-java:4.0.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
