@@ -1,5 +1,6 @@
 package shzh.me.model.bo
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -29,3 +30,9 @@ data class BvData(
 data class BvOwner(val name: String) {
     override fun toString(): String = name
 }
+
+@Serializable
+data class LiveInfo(
+    @SerialName("live_status")
+    val liveStatus: Int
+)
