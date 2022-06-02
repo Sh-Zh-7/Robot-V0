@@ -28,6 +28,7 @@ data class BvOwner(val name: String) {
 
 @Serializable
 data class BLiveInfo(
+    val uid: Long,
     @SerialName("live_status")
     val liveStatus: Int,
 )

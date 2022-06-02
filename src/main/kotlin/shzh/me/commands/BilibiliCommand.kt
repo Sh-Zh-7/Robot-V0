@@ -8,6 +8,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import shzh.me.model.bo.BLiveInfo
 import shzh.me.model.vo.GroupReplyVO
+import shzh.me.services.getBLiveCoverByUID
 import shzh.me.services.getBLiveInfo
 import shzh.me.services.getVideoInfo
 import shzh.me.services.sendGroupMessage
@@ -43,9 +44,10 @@ private suspend fun handleBLiveSub(call: ApplicationCall, liveID: String, groupI
         if (bLivePooling) {
             liveInfo = getBLiveInfo(liveID)
             if (oldStatus == 0 && liveInfo.liveStatus == 1) {
-                sendGroupMessage(groupID, "开播啦！")
+                val (cover, username) = getBLiveCoverByUID(liveInfo.uid)
+                sendGroupMessage(groupID, "[CQ:image,file=$cover]\n主播 $username 开播啦！")
             }
-            oldStatus = liveInfo.liveStatus   
+            oldStatus = liveInfo.liveStatus
         }
     }
 }
