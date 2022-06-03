@@ -8,3 +8,6 @@ data class DataWrapper<T>(
 ) {
     override fun toString(): String = data.toString()
 }
+
+@Serializable
+data class ResultWrapper<T>(val result: T)

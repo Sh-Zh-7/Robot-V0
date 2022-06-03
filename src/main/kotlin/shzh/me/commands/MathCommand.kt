@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.unbescape.html.HtmlEscape
 import shzh.me.services.replyMessage
-import shzh.me.utils.MessageBuilder
+import shzh.me.utils.MessageUtils
 import java.util.concurrent.TimeUnit
 
 suspend fun handleMath(call: ApplicationCall, command: String, messageID: Int) {
@@ -24,9 +24,10 @@ suspend fun handleMath(call: ApplicationCall, command: String, messageID: Int) {
     }
     val result = proc.inputStream.bufferedReader().readText()
 
-    val reply = MessageBuilder
+    val reply = MessageUtils
+        .builder()
         .reply(messageID)
-        .text("结果为${result.trim()}")
+        .text("结果为：${result.trim()}")
         .text("由Wolfram强力驱动", newline = false)
         .content()
     replyMessage(call, reply)

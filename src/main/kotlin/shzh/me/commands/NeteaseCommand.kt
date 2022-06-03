@@ -2,15 +2,17 @@ package shzh.me.commands
 
 import io.ktor.server.application.*
 import shzh.me.services.replyMessage
+import shzh.me.services.searchMusicByKeyword
 import shzh.me.utils.MessageUtils
 
-suspend fun handleGithub(call: ApplicationCall, link: String) {
-    val regex = "(https://github.com/)".toRegex()
-    val openGraph = regex.replace(link, "https://opengraph.githubassets.com/1/")
+suspend fun handleMusic(call: ApplicationCall, message: String) {
+    val name = message.substringAfter(' ')
+
+    val song = searchMusicByKeyword(name)
 
     val reply = MessageUtils
         .builder()
-        .image(openGraph)
+        .music("163", song.id)
         .content()
     replyMessage(call, reply)
 }

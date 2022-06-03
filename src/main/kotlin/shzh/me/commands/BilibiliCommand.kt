@@ -7,7 +7,7 @@ import io.ktor.server.response.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
 import shzh.me.services.*
-import shzh.me.utils.MessageBuilder
+import shzh.me.utils.MessageUtils
 import kotlin.collections.HashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -113,7 +113,8 @@ suspend fun poolingLiveRoom(groupID: Long, liveID: Long, oldStatusParam: Int, ch
         // Edge trigger: from not living to living
         if (oldStatus == 0 && liveData.liveStatus == 1) {
             val (cover, username) = getBLiveDataByUID(liveData.uid)
-            val message = MessageBuilder
+            val message = MessageUtils
+                .builder()
                 .image(cover)
                 .text("主播 $username 开播啦！")
                 .text("https://live.bilibili.com/$liveID", newline = false)

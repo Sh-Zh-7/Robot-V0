@@ -7,7 +7,6 @@ import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
-import shzh.me.services.upsertBVStreamer
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.UUID
@@ -51,8 +50,4 @@ class ApplicationTest {
         driver.quit()
     }
 
-    @Test
-    fun testJDBC() = testApplication {
-        upsertBVStreamer(1, 1)
-    }
 }
