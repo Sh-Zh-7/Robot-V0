@@ -1,6 +1,5 @@
 package shzh.me.plugins
 
-import dev.inmo.krontab.doInfinity
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*

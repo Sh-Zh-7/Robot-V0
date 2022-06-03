@@ -2,16 +2,21 @@ package shzh.me.commands
 
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import shzh.me.model.vo.GroupReplyVO
 import shzh.me.services.*
 import shzh.me.utils.MessageBuilder
+import kotlin.collections.HashMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.set
+import kotlin.collections.sorted
+import kotlin.collections.zip
 
 var channelsMap = HashMap<Pair<Long, Long>, Channel<Int>>()
 
@@ -20,8 +25,7 @@ suspend fun handleBvInfo(call: ApplicationCall, command: String) {
     val bv = regex.find(command)!!.groupValues[1]
     val data = getBVData(bv)
 
-    val res = Json.encodeToString(GroupReplyVO(data.toString()))
-    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+    replyMessage(call, data.toString())
 }
 
 suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long) {
@@ -60,8 +64,7 @@ private suspend fun handleBLiveList(call: ApplicationCall, groupID: Long) {
         }
     }
 
-    val response = Json.encodeToString(GroupReplyVO(reply))
-    call.respondText(response, ContentType.Application.Json, HttpStatusCode.OK)
+    replyMessage(call, reply)
 }
 
 private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID: Long) {
