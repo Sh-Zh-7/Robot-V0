@@ -33,7 +33,7 @@ dependencies {
     implementation("dev.inmo:krontab:0.7.2")
     implementation("org.ktorm:ktorm-core:3.4.1")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.ktorm:ktorm-support-mysql:3.4.1")
+    implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
     implementation("org.seleniumhq.selenium:selenium-java:4.0.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

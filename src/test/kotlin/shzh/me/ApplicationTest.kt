@@ -3,18 +3,11 @@ package shzh.me
 import io.ktor.server.testing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.ktorm.database.Database
-import org.ktorm.dsl.forEach
-import org.ktorm.dsl.from
-import org.ktorm.dsl.select
-import org.ktorm.schema.Table
-import org.ktorm.schema.int
-import org.ktorm.schema.varchar
 import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
-import shzh.me.services.subscribeBVStreamer
+import shzh.me.services.upsertBVStreamer
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.UUID
@@ -60,6 +53,6 @@ class ApplicationTest {
 
     @Test
     fun testJDBC() = testApplication {
-        subscribeBVStreamer(1, 1)
+        upsertBVStreamer(1, 1)
     }
 }
