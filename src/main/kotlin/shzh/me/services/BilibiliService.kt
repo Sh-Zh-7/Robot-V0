@@ -83,6 +83,10 @@ suspend fun getBLiveDataByUID(userID: Long): Pair<String, String> {
     return Pair(cover, username)
 }
 
+fun getBLiveAllSteamers(): List<GroupSubBVStreamer> {
+    return db.groupSubBVStreamers.toList()
+}
+
 fun getBLiveSteamersByGID(groupID: Long): List<GroupSubBVStreamer> {
     return db.groupSubBVStreamers
         .filter { it.groupID eq groupID }

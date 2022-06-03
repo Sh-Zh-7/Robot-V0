@@ -75,7 +75,7 @@ private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID:
     val key = Pair(groupID, liveID)
     if (!channelsMap.containsKey(key)) {
         channelsMap[key] = channel
-        poolingLiveRoom(groupID, liveID, channel)
+        poolingLiveRoom(groupID, liveID, 0, channel)
     }
 }
 
@@ -95,24 +95,37 @@ private suspend fun handleUnsubBLive(call: ApplicationCall, groupID: Long, liveI
     }
 }
 
-suspend fun poolingLiveRoom(groupID: Long, liveID: Long, channel: Channel<Int>) {
+suspend fun poolingLiveRoom(groupID: Long, liveID: Long, oldStatusParam: Int, channel: Channel<Int>) {
     val scheduler = buildSchedule {
         seconds { 0 every 10 }
     }
     val flow = scheduler.asFlow()
 
+    var oldStatus = oldStatusParam
     // Report when subscribing a streaming user
-    var oldStatus = 0
     flow.takeWhile {
         // Take until channel send token
         !channel.tryReceive().isSuccess
     }.collect {
         val liveData = getBLiveRoomData(liveID)
-        println(liveData)
+        // Edge trigger: from not living to living
         if (oldStatus == 0 && liveData.liveStatus == 1) {
             val (cover, username) = getBLiveDataByUID(liveData.uid)
             sendGroupMessage(groupID, "[CQ:image,file=$cover]\n主播 $username 开播啦！\nhttps://live.bilibili.com/$liveID")
         }
         oldStatus = liveData.liveStatus
+    }
+}
+
+suspend fun recoverPoolingJobs() {
+    val streamers = getBLiveAllSteamers()
+    streamers.forEach {
+        // Create channel and put it into hash map
+        val channel = Channel<Int>()
+        channelsMap[Pair(it.groupID, it.liveID)] = channel
+        // Get current live status as oldStatus
+        val status = getBLiveRoomData(it.liveID).liveStatus
+        // Start Pooling
+        poolingLiveRoom(it.groupID, it.liveID, status, channel)
     }
 }
