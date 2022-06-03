@@ -1,16 +1,18 @@
 package shzh.me.commands
 
-import dev.inmo.krontab.doInfinity
+import dev.inmo.krontab.builder.buildSchedule
+import dev.inmo.krontab.utils.asFlow
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import shzh.me.model.bo.BLiveInfo
 import shzh.me.model.vo.GroupReplyVO
 import shzh.me.services.*
 
-var bLivePooling = true
+var channelsMap = HashMap<Pair<Long, Long>, Channel<Int>>()
 
 suspend fun handleBvInfo(call: ApplicationCall, command: String) {
     val regex = Regex("https://www\\.bilibili\\.com/video/BV(\\w{10})")
@@ -35,9 +37,9 @@ suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long) {
     val liveID = liveIDStr.toLong()
     when (op) {
         // /blive subscribe <live_id>
-        "subscribe" -> handleSubBLive(call, liveID, groupID)
+        "subscribe" -> handleSubBLive(call, groupID, liveID)
         // /blive unsubscribe <live_id>
-        "unsubscribe" -> handleUnsubBLive(call, liveID, groupID)
+        "unsubscribe" -> handleUnsubBLive(call, groupID, liveID)
     }
 }
 
@@ -61,7 +63,7 @@ private suspend fun handleBLiveList(call: ApplicationCall, groupID: Long) {
     call.respondText(response, ContentType.Application.Json, HttpStatusCode.OK)
 }
 
-private suspend fun handleSubBLive(call: ApplicationCall, liveID: Long, groupID: Long) {
+private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID: Long) {
     call.respondText("")    // No reply
 
     // Persistent
@@ -69,26 +71,48 @@ private suspend fun handleSubBLive(call: ApplicationCall, liveID: Long, groupID:
     upsertBVStreamer(groupID, liveData.uid, liveID)
 
     // Start pooling
-    var oldStatus = 0
-    var liveInfo: BLiveInfo
-    doInfinity("/10 * * * *") {
-        if (bLivePooling) {
-            liveInfo = getBLiveRoomData(liveID)
-            if (oldStatus == 0 && liveInfo.liveStatus == 1) {
-                val (cover, username) = getBLiveDataByUID(liveInfo.uid)
-                sendGroupMessage(groupID, "[CQ:image,file=$cover]\n主播 $username 开播啦！\nhttps://live.bilibili.com/$liveID")
-            }
-            oldStatus = liveInfo.liveStatus
-        }
+    val channel = Channel<Int>()
+    val key = Pair(groupID, liveID)
+    if (!channelsMap.containsKey(key)) {
+        channelsMap[key] = channel
+        poolingLiveRoom(groupID, liveID, channel)
     }
 }
 
-private suspend fun handleUnsubBLive(call: ApplicationCall, liveID: Long, groupID: Long) {
+private suspend fun handleUnsubBLive(call: ApplicationCall, groupID: Long, liveID: Long) {
     call.respondText("")    // No reply
 
     // Delete from database
     deleteBVStreamer(groupID, liveID)
 
-    // Disable pooling
-    bLivePooling = false
+    // End pooling
+    val key = Pair(groupID, liveID)
+    val channel = channelsMap[key]
+    if (channel != null) {
+        channel.send(0)
+        channel.close()
+        channelsMap.remove(key)
+    }
+}
+
+suspend fun poolingLiveRoom(groupID: Long, liveID: Long, channel: Channel<Int>) {
+    val scheduler = buildSchedule {
+        seconds { 0 every 10 }
+    }
+    val flow = scheduler.asFlow()
+
+    // Report when subscribing a streaming user
+    var oldStatus = 0
+    flow.takeWhile {
+        // Take until channel send token
+        !channel.tryReceive().isSuccess
+    }.collect {
+        val liveData = getBLiveRoomData(liveID)
+        println(liveData)
+        if (oldStatus == 0 && liveData.liveStatus == 1) {
+            val (cover, username) = getBLiveDataByUID(liveData.uid)
+            sendGroupMessage(groupID, "[CQ:image,file=$cover]\n主播 $username 开播啦！\nhttps://live.bilibili.com/$liveID")
+        }
+        oldStatus = liveData.liveStatus
+    }
 }
