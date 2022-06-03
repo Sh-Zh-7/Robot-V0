@@ -15,7 +15,6 @@ val db = Database.connect(
 
 interface GroupSubBVStreamer: Entity<GroupSubBVStreamer> {
     companion object: Entity.Factory<GroupSubBVStreamer>()
-
     val id: Int
     var groupID: Long
     var userID: Long

@@ -1,14 +1,11 @@
 package shzh.me.commands
 
-import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.unbescape.html.HtmlEscape
-import shzh.me.model.vo.GroupReplyVO
+import shzh.me.services.replyMessage
+import shzh.me.utils.MessageBuilder
 import java.util.concurrent.TimeUnit
 
 suspend fun handleMath(call: ApplicationCall, command: String, messageID: Int) {
@@ -25,10 +22,12 @@ suspend fun handleMath(call: ApplicationCall, command: String, messageID: Int) {
 
         proc.waitFor(10000, TimeUnit.MILLISECONDS)
     }
-
     val result = proc.inputStream.bufferedReader().readText()
 
-    val reply = "[CQ:reply,id=$messageID]结果为：${result.trim()}\n由Wolfram强力驱动"
-    val res = Json.encodeToString(GroupReplyVO(reply))
-    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
+    val reply = MessageBuilder
+        .reply(messageID)
+        .text("结果为${result.trim()}")
+        .text("由Wolfram强力驱动", newline = false)
+        .content()
+    replyMessage(call, reply)
 }

@@ -11,6 +11,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import shzh.me.model.vo.GroupReplyVO
 import shzh.me.services.*
+import shzh.me.utils.MessageBuilder
 
 var channelsMap = HashMap<Pair<Long, Long>, Channel<Int>>()
 
@@ -96,9 +97,7 @@ private suspend fun handleUnsubBLive(call: ApplicationCall, groupID: Long, liveI
 }
 
 suspend fun poolingLiveRoom(groupID: Long, liveID: Long, oldStatusParam: Int, channel: Channel<Int>) {
-    val scheduler = buildSchedule {
-        seconds { 0 every 10 }
-    }
+    val scheduler = buildSchedule { seconds { 0 every 10 } }
     val flow = scheduler.asFlow()
 
     var oldStatus = oldStatusParam
@@ -111,7 +110,12 @@ suspend fun poolingLiveRoom(groupID: Long, liveID: Long, oldStatusParam: Int, ch
         // Edge trigger: from not living to living
         if (oldStatus == 0 && liveData.liveStatus == 1) {
             val (cover, username) = getBLiveDataByUID(liveData.uid)
-            sendGroupMessage(groupID, "[CQ:image,file=$cover]\n主播 $username 开播啦！\nhttps://live.bilibili.com/$liveID")
+            val message = MessageBuilder
+                .image(cover)
+                .text("主播 $username 开播啦！")
+                .text("https://live.bilibili.com/$liveID", newline = false)
+                .content()
+            sendGroupMessage(groupID, message)
         }
         oldStatus = liveData.liveStatus
     }

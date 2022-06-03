@@ -5,12 +5,15 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import shzh.me.model.DataWrapper
 import shzh.me.model.dto.MessageDTO
 import shzh.me.model.vo.GroupMessageVo
+import shzh.me.model.vo.GroupReplyVO
 
 val client = HttpClient(CIO)
 
@@ -38,4 +41,10 @@ suspend fun sendGroupMessage(gid: Long, message: String) {
         contentType(ContentType.Application.Json)
         setBody(body)
     }
+}
+
+// OneBot wrapper
+suspend fun replyMessage(call: ApplicationCall, message: String) {
+    val res = Json.encodeToString(GroupReplyVO(message))
+    call.respondText(res, ContentType.Application.Json, HttpStatusCode.OK)
 }
