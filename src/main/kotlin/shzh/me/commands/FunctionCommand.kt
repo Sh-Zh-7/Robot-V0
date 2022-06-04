@@ -38,6 +38,5 @@ suspend fun handleRepeat(message: String, groupID: Long) {
         // Different message, reset to 1
         Pair(message, 1)
     }
-    println(value.second)
     lastMessages[groupID] = value
 }

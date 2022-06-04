@@ -34,9 +34,11 @@ fun upsertBVStreamer(groupID: Long, userID: Long, liveID: Long) {
     }
 }
 
-fun deleteBVStreamer(groupID: Long, liveID: Long) {
+fun deleteBVStreamer(groupID: Long, liveID: Long): GroupSubBVStreamer? {
     val entity = db.groupSubBVStreamers.find {
         (it.groupID eq groupID) and (it.liveID eq liveID)
-    } ?: return
+    } ?: return null
     entity.delete()
+
+    return entity
 }

@@ -28,7 +28,7 @@ suspend fun handleBvInfo(call: ApplicationCall, command: String) {
     replyMessage(call, data.toString())
 }
 
-suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long) {
+suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long, messageID: Int) {
     val bLiveCmd = command.substringAfter(' ')
 
     // /blive list
@@ -42,9 +42,9 @@ suspend fun handleBLive(call: ApplicationCall, command: String, groupID: Long) {
     val liveID = liveIDStr.toLong()
     when (op) {
         // /blive subscribe <live_id>
-        "subscribe" -> handleSubBLive(call, groupID, liveID)
+        "subscribe" -> handleSubBLive(call, groupID, liveID, messageID)
         // /blive unsubscribe <live_id>
-        "unsubscribe" -> handleUnsubBLive(call, groupID, liveID)
+        "unsubscribe" -> handleUnsubBLive(call, groupID, liveID, messageID)
     }
 }
 
@@ -67,12 +67,19 @@ private suspend fun handleBLiveList(call: ApplicationCall, groupID: Long) {
     replyMessage(call, reply)
 }
 
-private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID: Long) {
-    call.respondText("")    // No reply
-
+private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID: Long, messageID: Int) {
     // Persistent
     val liveData = getBLiveRoomData(liveID)
     upsertBVStreamer(groupID, liveData.uid, liveID)
+
+    // Send back success message
+    val (_, username) = getBLiveDataByUID(liveData.uid)
+    val reply = MessageUtils
+        .builder()
+        .reply(messageID)
+        .text("成功关注主播 $username", newline = false)
+        .content()
+    replyMessage(call, reply)
 
     // Start pooling
     val channel = Channel<Int>()
@@ -83,11 +90,20 @@ private suspend fun handleSubBLive(call: ApplicationCall, groupID: Long, liveID:
     }
 }
 
-private suspend fun handleUnsubBLive(call: ApplicationCall, groupID: Long, liveID: Long) {
-    call.respondText("")    // No reply
-
+private suspend fun handleUnsubBLive(call: ApplicationCall, groupID: Long, liveID: Long, messageID: Int) {
     // Delete from database
-    deleteBVStreamer(groupID, liveID)
+    val streamer = deleteBVStreamer(groupID, liveID)
+
+    // Send back user success message when user existed
+    if (streamer != null) {
+        val (_, username) = getBLiveDataByUID(streamer.userID)
+        val reply = MessageUtils
+            .builder()
+            .reply(messageID)
+            .text("成功取关主播 $username", newline = false)
+            .content()
+        replyMessage(call, reply)
+    }
 
     // End pooling
     val key = Pair(groupID, liveID)
