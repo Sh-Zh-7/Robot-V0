@@ -3,10 +3,20 @@ package shzh.me.commands
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
 import io.ktor.server.application.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.withContext
+import org.openqa.selenium.By
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
 import shzh.me.services.*
 import shzh.me.utils.MessageUtils
+import java.awt.image.BufferedImage
+import java.io.File
+import java.util.*
+import javax.imageio.ImageIO
 import kotlin.collections.HashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -152,7 +162,7 @@ private suspend fun handleBDynList(call: ApplicationCall, groupID: Long) {
 
 private suspend fun handleSubBDyn(call: ApplicationCall, groupID: Long, userID: Long, messageID: Int) {
     // Persistent
-    val newest = getNewestPublishTimestamp(userID)
+    val (newest, _) = getNewestPublishTimestamp(userID)
     insertBVUser(groupID, userID, newest)
 
     // Send back success message
@@ -233,15 +243,20 @@ suspend fun poolingDynamic(groupID: Long, userID: Long, lastParam: Long, channel
         // Take until channel send token
         !channel.tryReceive().isSuccess
     }.collect {
-        val latest = getNewestPublishTimestamp(userID)
-        println(latest)
+        val (latest, dynamicID) = getNewestPublishTimestamp(userID)
+        println(dynamicID)
         // Level trigger: latest is newer
         if (latest > last) {
             updateBVUser(groupID, userID, latest)
+            val username = getUsernameByUID(userID)
+
+            val screenshot = screenshotBDynByID(dynamicID)
+            val absolutePath = screenshot.canonicalPath
 
             val message = MessageUtils
                 .builder()
-                .text("$userID 有新动态", newline = false)
+                .image("file://$absolutePath")
+                .text("UP主 $username 有新动态", newline = false)
                 .content()
             sendGroupMessage(groupID, message)
         }
@@ -267,7 +282,42 @@ suspend fun recoverPoolingBDyn() {
     users.forEach {
         val channel = Channel<Int>()
         bUsersChannels[Pair(it.groupID, it.userID)] = channel
-        val latest = getNewestPublishTimestamp(it.userID)
+        val (latest, _) = getNewestPublishTimestamp(it.userID)
         poolingDynamic(it.groupID, it.userID, latest, channel)
     }
+}
+
+private fun screenshotBDynByID(dynamicID: String): File {
+    // Headless mode for server use
+    val options = ChromeOptions()
+    options.addArguments("--headless")
+    options.addArguments("--disable-gpu");
+    options.addArguments("--window-size=1980,960");
+    val driver = ChromeDriver(options)
+
+    // Switch to Bilibili dynamic page
+    driver.get("https://t.bilibili.com/$dynamicID")
+
+    // Hide non-login users popup
+    val popup = driver.findElement(By.cssSelector("div.unlogin-popover.unlogin-popover-avatar"))
+    driver.executeScript("arguments[0].style.display = 'none';", popup)
+
+    // Element to screenshot
+    val target = driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div"))
+    val screenshot = target.getScreenshotAs(OutputType.BYTES)
+
+    // Clip main content
+    val destImage: BufferedImage
+    val content = driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div > div.main-content"))
+    val bufferedImage = ImageIO.read(screenshot.inputStream())
+    destImage = bufferedImage.getSubimage(0, 0, target.size.width, content.size.height)
+
+    // Save image file
+    val filename = UUID.randomUUID().toString()
+    val file = File("./images/$filename.png")
+    ImageIO.write(destImage, "png", file)
+
+    driver.quit()
+
+    return file
 }

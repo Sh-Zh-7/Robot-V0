@@ -14,7 +14,7 @@ import org.ktorm.entity.find
 import org.ktorm.entity.toList
 import shzh.me.model.dao.*
 
-suspend fun getNewestPublishTimestamp(userID: Long): Long {
+suspend fun getNewestPublishTimestamp(userID: Long): Pair<Long, String> {
     val client = HttpClient(CIO) {
         defaultRequest { url { host = "api.vc.bilibili.com" } }
     }
@@ -26,13 +26,16 @@ suspend fun getNewestPublishTimestamp(userID: Long): Long {
         }
     }.body<String>()
 
-    return Json.parseToJsonElement(response)
+    val desc = Json.parseToJsonElement(response)
         .jsonObject["data"]!!
         .jsonObject["cards"]!!
         .jsonArray[0]
         .jsonObject["desc"]!!
-        .jsonObject["timestamp"]!!
-        .jsonPrimitive.long
+
+    val timestamp = desc.jsonObject["timestamp"]!!.jsonPrimitive.long
+    val dynamicID = desc.jsonObject["dynamic_id"]!!.jsonPrimitive.long.toString()
+
+    return Pair(timestamp, dynamicID)
 }
 
 fun getAllBDynUsers(): List<GroupSubBVUser> {

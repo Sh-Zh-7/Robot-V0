@@ -1,5 +1,8 @@
 package shzh.me
 
+import com.rometools.rome.feed.synd.SyndFeed
+import com.rometools.rome.io.SyndFeedInput
+import com.rometools.rome.io.XmlReader
 import io.ktor.server.testing.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,9 +12,11 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import java.awt.image.BufferedImage
 import java.io.File
-import java.util.UUID
+import java.net.URL
+import java.util.*
 import javax.imageio.ImageIO
 import kotlin.test.Test
+
 
 class ApplicationTest {
     @Test
@@ -24,7 +29,7 @@ class ApplicationTest {
         val driver = ChromeDriver(options)
 
         // Switch to Bilibili dynamic page
-        driver.get("https://t.bilibili.com/667051804590080023")
+        driver.get("https://t.bilibili.com/667944337435263017")
 
         // Hide non-login users popup
         val popup = driver.findElement(By.cssSelector("div.unlogin-popover.unlogin-popover-avatar"))
@@ -48,6 +53,13 @@ class ApplicationTest {
         }
 
         driver.quit()
+    }
+
+    @Test
+    fun testRSS() {
+        val url = "https://rsshub.app/bilibili/user/dynamic/359345207"
+        val feed: SyndFeed = SyndFeedInput().build(XmlReader(URL(url)))
+        println(feed.entries[0].publishedDate)
     }
 
 }
