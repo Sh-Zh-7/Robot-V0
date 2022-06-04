@@ -27,6 +27,7 @@ fun Application.configureRouting() {
                         "/ping" == msg.message -> handlePing(call, msg.messageID)
                         "/dice" in msg.message -> handleDice(call, msg.message, msg.messageID)
                         "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
+                        "/bili" in msg.message -> handleBDyn(call, msg.message, msg.groupID, msg.messageID)
                         "/blive" in msg.message -> handleBLive(call, msg.message, msg.groupID, msg.messageID)
                         "/music" in msg.message -> handleMusic(call, msg.message)
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)

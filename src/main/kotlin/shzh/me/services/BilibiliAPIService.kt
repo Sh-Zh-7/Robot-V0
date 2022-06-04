@@ -74,3 +74,9 @@ suspend fun getBLiveDataByUID(userID: Long): Pair<String, String> {
 
     return Pair(cover, username)
 }
+
+suspend fun getUsernameByUID(userID: Long): String {
+    val (_, username) = getBLiveDataByUID(userID)
+
+    return username
+}

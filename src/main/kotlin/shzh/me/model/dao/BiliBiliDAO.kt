@@ -29,3 +29,20 @@ object GroupSubBVStreamers: Table<GroupSubBVStreamer>("group_subscribed_bv_strea
 }
 
 val Database.groupSubBVStreamers get() = this.sequenceOf(GroupSubBVStreamers)
+
+interface GroupSubBVUser: Entity<GroupSubBVUser> {
+    companion object: Entity.Factory<GroupSubBVUser>()
+    val id: Int
+    var groupID: Long
+    var userID: Long
+    var published: Long
+}
+
+object GroupSubBVUsers: Table<GroupSubBVUser>("group_subscribed_bv_user") {
+    val id = int("id").primaryKey().bindTo { it.id }
+    val groupID = long("group_id").bindTo { it.groupID }
+    val userID = long("user_id").bindTo { it.userID }
+    val published = long("published").bindTo { it.published }
+}
+
+val Database.groupSubBVUsers get() = this.sequenceOf(GroupSubBVUsers)
