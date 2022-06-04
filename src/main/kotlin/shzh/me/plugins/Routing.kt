@@ -33,6 +33,8 @@ fun Application.configureRouting() {
                         "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
                         Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message, msg.sender.userID)
                     }
+
+                    handleRepeat(msg.message, msg.groupID)
                 }
                 "meta_event" -> println("Heartbeat package received!")
                 else -> println("Unknown package type received!!")
