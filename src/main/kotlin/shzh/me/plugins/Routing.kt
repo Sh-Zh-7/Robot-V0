@@ -36,6 +36,7 @@ fun Application.configureRouting() {
                     }
 
                     handleRepeat(msg.message, msg.groupID)
+                    recordMessage(msg.groupID, msg.sender.userID, msg.sender.nickname, msg.message)
                 }
                 "meta_event" -> println("Heartbeat package received!")
                 else -> println("Unknown package type received!!")
