@@ -34,6 +34,7 @@ fun Application.configureRouting() {
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)
                         "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
                         Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message, msg.sender.userID)
+                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*/quote") matches msg.message -> handleQuote(call, msg.message)
                     }
 
                     handleRepeat(msg.message, msg.groupID)
