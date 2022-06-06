@@ -12,9 +12,25 @@ import shzh.me.utils.MessageUtils
 
 suspend fun handleFindHistory(call: ApplicationCall, command: String, groupID: Long, messageID: Int) {
     val historyCmd = command.substringAfter(' ')
+    val params = historyCmd.split(' ')
 
-    val count = getHistoryMessageCount(groupID, historyCmd)
-    val query = searchHistoryMessage(groupID, historyCmd)
+    var text: String? = null
+    var userID: Long? = null
+    params.forEach { param ->
+        val pair = param.split(':')
+        if (pair.size == 2) {
+            val (key, value) = pair
+
+            when (key) {
+                "u" -> userID = value.toLong()
+            }
+        } else {
+            text = param
+        }
+    }
+
+    val count = getHistoryMessageCount(groupID, userID, text)
+    val query = searchHistoryMessage(groupID, userID, text)
 
     var result = ""
     query.forEachIndexed{ index, row ->

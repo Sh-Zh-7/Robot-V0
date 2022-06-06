@@ -62,4 +62,28 @@ class ApplicationTest {
         println(feed.entries[0].publishedDate)
     }
 
+    @Test
+    fun testHTMLToImage() = testApplication {
+        // Headless mode for server use
+        val options = ChromeOptions()
+        options.addArguments("--headless")
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1980,960");
+        val driver = ChromeDriver(options)
+
+        // Switch to Bilibili dynamic page
+        driver.get("file:///Users/shzh7/IdeaProjects/Robot-V0/index.html")
+        val target = driver.findElement(By.cssSelector(".container"))
+        val screenshot = target.getScreenshotAs(OutputType.FILE)
+        withContext(Dispatchers.IO) {
+            val image = ImageIO.read(screenshot.inputStream())
+
+            val filename = UUID.randomUUID().toString()
+            val file = File("./$filename.png")
+            ImageIO.write(image, "png", file)
+        }
+
+        driver.quit()
+    }
+
 }
