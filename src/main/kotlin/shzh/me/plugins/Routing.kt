@@ -30,6 +30,7 @@ fun Application.configureRouting() {
                         "/find" in msg.message -> handleFindHistory(call, msg.message, msg.groupID, msg.messageID)
                         "/bili" in msg.message -> handleBDyn(call, msg.message, msg.groupID, msg.messageID)
                         "/blive" in msg.message -> handleBLive(call, msg.message, msg.groupID, msg.messageID)
+                        "/weibo" in msg.message -> handleWeibo(call, msg.message, msg.groupID, msg.messageID)
                         "/music" in msg.message -> handleMusic(call, msg.message)
                         "https://github.com/" in msg.message -> handleGithub(call, msg.message)
                         "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
