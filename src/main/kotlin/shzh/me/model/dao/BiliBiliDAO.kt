@@ -7,12 +7,6 @@ import org.ktorm.schema.Table
 import org.ktorm.schema.int
 import org.ktorm.schema.long
 
-val db = Database.connect(
-    url = "jdbc:postgresql://localhost:5432/robot",
-    user = "admin",
-    password = "admin",
-)
-
 interface GroupSubBVStreamer: Entity<GroupSubBVStreamer> {
     companion object: Entity.Factory<GroupSubBVStreamer>()
     val id: Int

@@ -4,31 +4,36 @@ import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.unbescape.html.HtmlEscape
-import shzh.me.services.replyMessage
+import shzh.me.model.dto.MessageDTO
+import shzh.me.services.impl.OneBotServiceImpl
 import shzh.me.utils.MessageUtils
 import java.util.concurrent.TimeUnit
 
-suspend fun handleMath(call: ApplicationCall, command: String, messageID: Int) {
-    val expr = command.substringAfter(' ')
-    val escaped = HtmlEscape.unescapeHtml(expr)
-    val script = listOf("wolframscript", "-code", escaped)
+object MathCommand {
+    private val onebotService = OneBotServiceImpl()
 
-    val proc: Process
-    withContext(Dispatchers.IO) {
-        proc = ProcessBuilder(script)
-            .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            .redirectError(ProcessBuilder.Redirect.PIPE)
-            .start()
+    suspend fun handle(call: ApplicationCall, message: MessageDTO) {
+        val expr = message.message.substringAfter(' ')
+        val escaped = HtmlEscape.unescapeHtml(expr)
+        val script = listOf("wolframscript", "-code", escaped)
 
-        proc.waitFor(10000, TimeUnit.MILLISECONDS)
+        val proc: Process
+        withContext(Dispatchers.IO) {
+            proc = ProcessBuilder(script)
+                .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                .redirectError(ProcessBuilder.Redirect.PIPE)
+                .start()
+
+            proc.waitFor(10000, TimeUnit.MILLISECONDS)
+        }
+        val result = proc.inputStream.bufferedReader().readText()
+
+        val reply = MessageUtils
+            .builder()
+            .reply(message.messageID)
+            .text("结果为：${result.trim()}")
+            .text("由Wolfram强力驱动")
+            .content()
+        onebotService.replyMessage(call, reply)
     }
-    val result = proc.inputStream.bufferedReader().readText()
-
-    val reply = MessageUtils
-        .builder()
-        .reply(messageID)
-        .text("结果为：${result.trim()}")
-        .text("由Wolfram强力驱动", newline = false)
-        .content()
-    replyMessage(call, reply)
 }

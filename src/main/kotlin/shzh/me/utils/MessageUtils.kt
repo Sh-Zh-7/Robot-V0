@@ -29,6 +29,6 @@ object MessageUtils {
     }
 
     fun content(): String {
-        return this.message
+        return this.message.trimEnd()
     }
 }

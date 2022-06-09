@@ -1,18 +1,24 @@
 package shzh.me.commands
 
 import io.ktor.server.application.*
-import shzh.me.services.replyMessage
-import shzh.me.services.searchMusicByKeyword
+import shzh.me.model.dto.MessageDTO
+import shzh.me.services.impl.NeteaseServiceImpl
+import shzh.me.services.impl.OneBotServiceImpl
 import shzh.me.utils.MessageUtils
 
-suspend fun handleMusic(call: ApplicationCall, message: String) {
-    val name = message.substringAfter(' ')
+object NeteaseCommand {
+    private val onebotService = OneBotServiceImpl()
+    private val neteaseService = NeteaseServiceImpl()
 
-    val song = searchMusicByKeyword(name)
+    suspend fun handle(call: ApplicationCall, message: MessageDTO) {
+        val name = message.message.substringAfter(' ')
 
-    val reply = MessageUtils
-        .builder()
-        .music("163", song.id)
-        .content()
-    replyMessage(call, reply)
+        val song = neteaseService.searchMusicByKeyword(name)
+
+        val reply = MessageUtils
+            .builder()
+            .music("163", song.id)
+            .content()
+        onebotService.replyMessage(call, reply)
+    }
 }

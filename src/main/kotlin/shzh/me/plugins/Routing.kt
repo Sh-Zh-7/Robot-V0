@@ -1,16 +1,16 @@
 package shzh.me.plugins
 
-import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.routing.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import shzh.me.commands.*
+import shzh.me.format
 import shzh.me.model.dto.MessageDTO
-
-val format = Json { ignoreUnknownKeys = true }
+import shzh.me.utils.CQCodeUtils
 
 fun Application.configureRouting() {
     routing {
@@ -24,24 +24,26 @@ fun Application.configureRouting() {
                     val msg = format.decodeFromString<MessageDTO>(body)
 
                     when {
-                        "/ping" == msg.message -> handlePing(call, msg.messageID)
-                        "/dice" in msg.message -> handleDice(call, msg.message, msg.messageID)
-                        "/math" in msg.message -> handleMath(call, msg.message, msg.messageID)
-                        "/music" in msg.message -> handleMusic(call, msg.message)
-                        "/find" in msg.message -> handleFindHistory(call, msg.message, msg.groupID, msg.messageID)
-                        "/bili" in msg.message -> handleBDyn(call, msg.message, msg.groupID, msg.messageID)
-                        "/blive" in msg.message -> handleBLive(call, msg.message, msg.groupID, msg.messageID)
-                        "/weibo" in msg.message -> handleWeibo(call, msg.message, msg.groupID, msg.messageID)
-                        "/zhihu" in msg.message -> handleZhihu(call, msg.message, msg.groupID, msg.messageID)
-                        "/github" in msg.message -> handleGithub(call, msg.message, msg.groupID, msg.messageID)
-                        "https://github.com/" in msg.message -> handleGithubLinks(call, msg.message)
-                        "https://www.bilibili.com/video/" in msg.message -> handleBvInfo(call, msg.message)
-                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*撤回") matches msg.message -> handleCallback(msg.message, msg.sender.userID)
-                        Regex("\\[CQ:reply,id=(-?\\d+)]\\s*/quote") matches msg.message -> handleQuote(call, msg.message)
+                        "/ping" == msg.message -> PingCommand.handle(call, msg)
+                        "/dice" in msg.message -> DiceCommand.handle(call, msg)
+                        "/math" in msg.message -> MathCommand.handle(call, msg)
+                        "/music" in msg.message -> NeteaseCommand.handle(call, msg)
+                        "/find" in msg.message -> HistoryCommand.handle(call, msg)
+                        "/bili" in msg.message -> BilibiliDynamicCommand.handle(call, msg)
+                        "/blive" in msg.message -> BilibiliLiveCommand.handle(call, msg)
+                        "/weibo" in msg.message -> WeiboCommand.handle(call, msg)
+                        "/zhihu" in msg.message -> ZhihuCommand.handle(call, msg)
+                        "/github" in msg.message -> GithubCommand.handle(call, msg)
+                        "https://github.com/" in msg.message -> GithubLinkCommand.handle(call, msg)
+                        "https://www.bilibili.com/video/" in msg.message -> BilibiliVideoCommand.handle(call, msg)
+                        Regex("${CQCodeUtils.replyPattern}\\s*撤回") matches msg.message
+                            -> CallbackCommand.handle(msg)
+                        Regex("${CQCodeUtils.replyPattern}\\s*/quote") matches msg.message
+                            -> QuoteCommand.handle(call, msg)
                     }
 
-                    handleRepeat(msg.message, msg.groupID)
-                    recordMessage(msg.groupID, msg.sender.userID, msg.sender.nickname, msg.message)
+                    RepeatCommand.handle(msg)
+                    HistoryCommand.recordMessage(msg)
                 }
                 "meta_event" -> println("Heartbeat package received!")
                 else -> println("Unknown package type received!!")
