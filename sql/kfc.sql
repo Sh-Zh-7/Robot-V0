@@ -1,3 +1,4 @@
+-- 疯狂星期四文案表
 CREATE TABLE IF NOT EXISTS kfc_writings (
     id SERIAL PRIMARY KEY,
     writing TEXT NOT NULL
