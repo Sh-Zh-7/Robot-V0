@@ -94,7 +94,7 @@ object BilibiliDynamicCommand {
         val key = Pair(groupID, userID)
         if (!bUsersChannels.containsKey(key)) {
             bUsersChannels[key] = channel
-            pooling(groupID, userID, newest, channel)
+            polling(groupID, userID, newest, channel)
         }
     }
 
@@ -123,7 +123,7 @@ object BilibiliDynamicCommand {
         }
     }
 
-    private suspend fun pooling(groupID: Long, userID: Long, lastParam: Long, channel: Channel<Int>) {
+    private suspend fun polling(groupID: Long, userID: Long, lastParam: Long, channel: Channel<Int>) {
         val scheduler = buildSchedule { seconds { 0 every 10 } }
         val flow = scheduler.asFlow()
 
@@ -158,7 +158,7 @@ object BilibiliDynamicCommand {
             val channel = Channel<Int>()
             bUsersChannels[Pair(it.groupID, it.userID)] = channel
             val (latest, _) = bilibiliDynService.getNewestPublishTimestamp(it.userID)
-            pooling(it.groupID, it.userID, latest, channel)
+            polling(it.groupID, it.userID, latest, channel)
         }
     }
 
@@ -255,7 +255,7 @@ object BilibiliLiveCommand {
         val key = Pair(groupID, liveID)
         if (!bLiveChannels.containsKey(key)) {
             bLiveChannels[key] = channel
-            pooling(groupID, liveID, 0, channel)
+            polling(groupID, liveID, 0, channel)
         }
     }
 
@@ -284,7 +284,7 @@ object BilibiliLiveCommand {
         }
     }
 
-    private suspend fun pooling(groupID: Long, liveID: Long, oldStatusParam: Int, channel: Channel<Int>) {
+    private suspend fun polling(groupID: Long, liveID: Long, oldStatusParam: Int, channel: Channel<Int>) {
         val scheduler = buildSchedule { seconds { 0 every 10 } }
         val flow = scheduler.asFlow()
 
@@ -319,7 +319,7 @@ object BilibiliLiveCommand {
             // Get current live status as oldStatus
             val status = bilibiliApiService.getBLiveRoomData(it.liveID).liveStatus
             // Start Pooling
-            pooling(it.groupID, it.liveID, status, channel)
+            polling(it.groupID, it.liveID, status, channel)
         }
     }
 }

@@ -79,7 +79,7 @@ object GithubCommand {
         val key = Pair(groupID, username)
         if (!githubChannels.containsKey(key)) {
             githubChannels[key] = channel
-            pooling(groupID, username, published, channel)
+            polling(groupID, username, published, channel)
         }
     }
 
@@ -104,7 +104,7 @@ object GithubCommand {
         }
     }
 
-    private suspend fun pooling(groupID: Long, username: String, lastParam: Date, channel: Channel<Int>) {
+    private suspend fun polling(groupID: Long, username: String, lastParam: Date, channel: Channel<Int>) {
         val scheduler = buildSchedule { minutes { 0 every 1 } }
         val flow = scheduler.asFlow()
 
@@ -167,7 +167,7 @@ object GithubCommand {
             val channel = Channel<Int>()
             githubChannels[Pair(it.groupID, it.username)] = channel
             val latest = githubService.getLatestDynDate(it.username)
-            pooling(it.groupID, it.username, latest, channel)
+            polling(it.groupID, it.username, latest, channel)
         }
     }
 

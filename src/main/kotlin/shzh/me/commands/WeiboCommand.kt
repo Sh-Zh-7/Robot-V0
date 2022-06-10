@@ -74,7 +74,7 @@ object WeiboCommand {
         val key = Pair(groupID, weiboID)
         if (!weiboChannels.containsKey(key)) {
             weiboChannels[key] = channel
-            poolingWeibo(groupID, weiboID, published, channel)
+            polling(groupID, weiboID, published, channel)
         }
     }
 
@@ -100,7 +100,7 @@ object WeiboCommand {
         }
     }
 
-    private suspend fun poolingWeibo(groupID: Long, weiboID: Long, lastParam: Date, channel: Channel<Int>) {
+    private suspend fun polling(groupID: Long, weiboID: Long, lastParam: Date, channel: Channel<Int>) {
         val scheduler = buildSchedule { minutes { 0 every 1 } }
         val flow = scheduler.asFlow()
 
@@ -150,7 +150,7 @@ object WeiboCommand {
             val channel = Channel<Int>()
             weiboChannels[Pair(it.groupID, it.weiboID)] = channel
             val latest = weiboService.getLatestWeiboByWeiboID(it.weiboID)
-            poolingWeibo(it.groupID, it.weiboID, latest.publishedDate, channel)
+            polling(it.groupID, it.weiboID, latest.publishedDate, channel)
         }
     }
 
