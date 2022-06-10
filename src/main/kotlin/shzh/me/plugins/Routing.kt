@@ -25,6 +25,7 @@ fun Application.configureRouting() {
 
                     when {
                         "/ping" == msg.message -> PingCommand.handle(call, msg)
+                        "/diy" == msg.message -> DiyCommand.handle(call, msg)
                         "/progress" == msg.message -> ProgressCommand.handle(call, msg)
                         "/dice" in msg.message -> DiceCommand.handle(call, msg)
                         "/math" in msg.message -> MathCommand.handle(call, msg)

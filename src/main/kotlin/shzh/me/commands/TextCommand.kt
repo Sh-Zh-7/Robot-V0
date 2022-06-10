@@ -71,7 +71,7 @@ object DiyCommand {
     private val onebotService = OneBotServiceImpl()
 
     suspend fun handle(call: ApplicationCall, message: MessageDTO) {
-
+        onebotService.replyMessage(call, "你写就有了")
     }
 }
 
