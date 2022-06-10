@@ -1,8 +1,14 @@
 package shzh.me.commands
 
+import dev.inmo.krontab.doInfinity
 import io.ktor.server.application.*
+import org.ktorm.dsl.*
+import org.ktorm.schema.Table
+import org.ktorm.schema.int
+import org.ktorm.schema.text
 import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
+import shzh.me.db
 import shzh.me.model.dto.MessageDTO
 import shzh.me.services.impl.OneBotServiceImpl
 import shzh.me.utils.BrowserUtils
@@ -101,5 +107,43 @@ figcaption{font-size:1.5rem;font-style:italic}</style><body><div class="containe
         ImageIO.write(image, "png", file)
 
         return file.canonicalPath
+    }
+}
+
+object KfcCommand {
+    private val registerGroups = setOf<Long>(653055440, 650197081)
+    private val onebotService = OneBotServiceImpl()
+
+    object KfcWritings: Table<Nothing>("kfc_writings") {
+        val id = int("id").primaryKey()
+        val writing = text("writing")
+    }
+
+    suspend fun polling() {
+        doInfinity("0 0 12 * * * 0o 4w") {
+            registerGroups.forEach { groupID ->
+                val writing = getRandomWriting()
+
+                onebotService.sendGroupMessage(groupID, writing)
+            }
+        }
+    }
+
+    private fun getRandomWriting(): String {
+        val count = getWritingsCount()
+        val rand = (1..count).random()
+
+        return db
+            .from(KfcWritings)
+            .select(KfcWritings.writing)
+            .where { KfcWritings.id eq rand }
+            .map { row -> row.getString(1) }[0]!!
+    }
+
+    private fun getWritingsCount(): Int {
+        return db
+            .from(KfcWritings)
+            .select(count(KfcWritings.id))
+            .map { row -> row.getInt(1) }[0]
     }
 }
