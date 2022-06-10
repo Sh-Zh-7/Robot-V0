@@ -4,6 +4,8 @@ import io.ktor.server.application.*
 import shzh.me.model.dto.MessageDTO
 import shzh.me.services.impl.OneBotServiceImpl
 import shzh.me.utils.MessageUtils
+import shzh.me.utils.TimeUtils
+import java.util.*
 
 object PingCommand {
     private val onebotService = OneBotServiceImpl()
@@ -39,4 +41,40 @@ object DiceCommand {
             onebotService.replyMessage(call, reply)
         }
     }
+}
+
+object ProgressCommand {
+    private val onebotService = OneBotServiceImpl()
+
+    suspend fun handle(call: ApplicationCall, message: MessageDTO) {
+        val calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_YEAR)
+        val totalDays = TimeUtils.getTotalDaysInYear(calendar)
+
+        val progress = day.toDouble() / totalDays
+        val percent = (progress * 100).toUInt()
+
+        val solid = (progress * 15).toInt()
+        val remain = 15 - solid
+        val bar = "▓".repeat(solid) + "░".repeat(remain)
+
+        val reply = MessageUtils
+            .builder()
+            .text(bar)
+            .text("${calendar.get(Calendar.YEAR)}年进度：$percent%")
+            .content()
+        onebotService.replyMessage(call, reply)
+    }
+}
+
+object DiyCommand {
+    private val onebotService = OneBotServiceImpl()
+
+    suspend fun handle(call: ApplicationCall, message: MessageDTO) {
+
+    }
+}
+
+object HelpCommand {
+
 }
