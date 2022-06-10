@@ -39,23 +39,21 @@ object RepeatCommand {
 
     suspend fun handle(message: MessageDTO) {
         if (!lastMessages.containsKey(message.groupID)) {
-            // First message of group, usually happen when server restart
+            // 群组的第一条消息，通常在服务器重启的时候遇到
             lastMessages[message.groupID] = Pair(message.message, 1)
             return
         }
 
         val (lastMessage, count) = lastMessages[message.groupID]!!
         val value = if (lastMessage == message.message) {
-            // Repeat when the message is already repeat 3 times
+            // 当消息重复三次的时候复读
             if (count + 1 == 3) {
                 onebotService.sendGroupMessage(message.groupID, message.message)
                 Pair(lastMessage, 4)
             } else {
-                // Same message, increase count
                 Pair(lastMessage, count + 1)
             }
         } else {
-            // Different message, reset to 1
             Pair(message.message, 1)
         }
         lastMessages[message.groupID] = value
@@ -97,7 +95,6 @@ figcaption{font-size:1.5rem;font-style:italic}</style><body><div class="containe
 
         val driver = BrowserUtils.getDriver()
 
-        // Switch to Bilibili dynamic page
         driver.get("file://${html.canonicalPath}")
         val target = driver.findElement(By.cssSelector(".container"))
         val screenshot = target.getScreenshotAs(OutputType.BYTES)

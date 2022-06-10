@@ -76,11 +76,9 @@ object BilibiliDynamicCommand {
     }
 
     private suspend fun subscribe(call: ApplicationCall, groupID: Long, userID: Long, messageID: Int) {
-        // Persistent
         val (newest, _) = bilibiliDynService.getNewestPublishTimestamp(userID)
         bilibiliDynService.insertBVUser(groupID, userID, newest)
 
-        // Send back success message
         val username = bilibiliApiService.getUsernameByUID(userID)
         val reply = MessageUtils
             .builder()
@@ -89,7 +87,6 @@ object BilibiliDynamicCommand {
             .content()
         onebotService.replyMessage(call, reply)
 
-        // Start pooling
         val channel = Channel<Int>()
         val key = Pair(groupID, userID)
         if (!bUsersChannels.containsKey(key)) {
@@ -99,10 +96,8 @@ object BilibiliDynamicCommand {
     }
 
     private suspend fun unsubscribe(call: ApplicationCall, groupID: Long, userID: Long, messageID: Int) {
-        // Delete from database
         val user = bilibiliDynService.deleteBVUser(groupID, userID)
 
-        // Send back success message when user existed
         if (user != null) {
             val username = bilibiliApiService.getUsernameByUID(userID)
             val reply = MessageUtils
@@ -113,7 +108,6 @@ object BilibiliDynamicCommand {
             onebotService.replyMessage(call, reply)
         }
 
-        // End pooling
         val key = Pair(groupID, userID)
         val channel = bUsersChannels[key]
         if (channel != null) {
@@ -129,11 +123,9 @@ object BilibiliDynamicCommand {
 
         var last = lastParam
         flow.takeWhile {
-            // Take until channel send token
             !channel.tryReceive().isSuccess
         }.collect {
             val (latest, dynamicID) = bilibiliDynService.getNewestPublishTimestamp(userID)
-            // Level trigger: latest is newer
             if (latest > last) {
                 bilibiliDynService.updateBVUser(groupID, userID, latest)
                 val username = bilibiliApiService.getUsernameByUID(userID)
@@ -163,26 +155,25 @@ object BilibiliDynamicCommand {
     }
 
     private fun screenshot(dynamicID: String): File {
-        // Headless mode for server use
         val driver = BrowserUtils.getDriver()
 
-        // Switch to Bilibili dynamic page
+        // 跳转到截图页面
         driver.get("https://t.bilibili.com/$dynamicID")
 
-        // Hide non-login users popup
+        // 隐藏未登录的popup，防止遮挡目标元素
         val popup = driver.findElement(By.cssSelector("div.unlogin-popover.unlogin-popover-avatar"))
         driver.executeScript("arguments[0].style.display = 'none';", popup)
 
-        // Element to screenshot
+        // 选择要截图的元素对象
         val target = driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div"))
         val screenshot = target.getScreenshotAs(OutputType.BYTES)
 
-        // Clip main content
+        // 获取子图的大小
         val content = driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div > div.main-content"))
         val bufferedImage = ImageIO.read(screenshot.inputStream())
         val destImage = bufferedImage.getSubimage(0, 0, target.size.width, content.size.height)
 
-        // Save image file
+        // 持久化截取的图片
         val filename = UUID.randomUUID().toString()
         val file = File("./images/bilibili/$filename.png")
         ImageIO.write(destImage, "png", file)
@@ -206,7 +197,7 @@ object BilibiliLiveCommand {
             return
         }
 
-        // For /blive [subscribe | unsubscribe]
+        // /blive [subscribe | unsubscribe]
         val (op, liveIDStr) = bLiveCmd.split(' ')
         val liveID = liveIDStr.toLong()
         when (op) {
@@ -223,10 +214,8 @@ object BilibiliLiveCommand {
         val reply = if (streamers.isEmpty()) {
             "本群没有订阅B站任何主播！"
         } else {
-            // Get streamers' names
             val userIDs = streamers.map { it.userID }
             val names = bilibiliApiService.getBLiveNamesByUIDs(userIDs)
-            // Ascend streamers' live IDs
             val liveIDs = streamers.map { it.liveID }.sorted()
             "本群订阅的B站直播：\n" + (liveIDs zip names).joinToString(separator = "\n") {
                 "${it.first}\t${it.second}"
@@ -237,11 +226,9 @@ object BilibiliLiveCommand {
     }
 
     private suspend fun subscribe(call: ApplicationCall, groupID: Long, liveID: Long, messageID: Int) {
-        // Persistent
         val liveData = bilibiliApiService.getBLiveRoomData(liveID)
         bilibiliLiveService.upsertBVStreamer(groupID, liveData.uid, liveID)
 
-        // Send back success message
         val (_, username) = bilibiliApiService.getBLiveDataByUID(liveData.uid)
         val reply = MessageUtils
             .builder()
@@ -250,7 +237,6 @@ object BilibiliLiveCommand {
             .content()
         onebotService.replyMessage(call, reply)
 
-        // Start pooling
         val channel = Channel<Int>()
         val key = Pair(groupID, liveID)
         if (!bLiveChannels.containsKey(key)) {
@@ -260,10 +246,8 @@ object BilibiliLiveCommand {
     }
 
     private suspend fun unsubscribe(call: ApplicationCall, groupID: Long, liveID: Long, messageID: Int) {
-        // Delete from database
         val streamer = bilibiliLiveService.deleteBVStreamer(groupID, liveID)
 
-        // Send back success message when steamer existed
         if (streamer != null) {
             val (_, username) = bilibiliApiService.getBLiveDataByUID(streamer.userID)
             val reply = MessageUtils
@@ -274,7 +258,6 @@ object BilibiliLiveCommand {
             onebotService.replyMessage(call, reply)
         }
 
-        // End pooling
         val key = Pair(groupID, liveID)
         val channel = bLiveChannels[key]
         if (channel != null) {
@@ -289,13 +272,11 @@ object BilibiliLiveCommand {
         val flow = scheduler.asFlow()
 
         var oldStatus = oldStatusParam
-        // Report when subscribing a streaming user
         flow.takeWhile {
-            // Take until channel send token
             !channel.tryReceive().isSuccess
         }.collect {
             val liveData = bilibiliApiService.getBLiveRoomData(liveID)
-            // Edge trigger: from not living to living
+            // 边缘触发：只有从未开播到开播才会响应
             if (oldStatus == 0 && liveData.liveStatus == 1) {
                 val (cover, username) = bilibiliApiService.getBLiveDataByUID(liveData.uid)
                 val message = MessageUtils
@@ -313,12 +294,9 @@ object BilibiliLiveCommand {
     suspend fun recover() {
         val streamers = bilibiliLiveService.getBLiveAllSteamers()
         streamers.forEach {
-            // Create channel and put it into hash map
             val channel = Channel<Int>()
             bLiveChannels[Pair(it.groupID, it.liveID)] = channel
-            // Get current live status as oldStatus
             val status = bilibiliApiService.getBLiveRoomData(it.liveID).liveStatus
-            // Start Pooling
             polling(it.groupID, it.liveID, status, channel)
         }
     }

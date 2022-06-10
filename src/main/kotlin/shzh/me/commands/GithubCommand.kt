@@ -41,7 +41,7 @@ object GithubCommand {
             return
         }
 
-        // For /github [subscribe | unsubscribe]
+        // /github [subscribe | unsubscribe]
         val (op, username) = githubCmd.split(' ')
         when (op) {
             // /github subscribe <weibo_id>

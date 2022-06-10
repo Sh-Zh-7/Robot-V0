@@ -25,7 +25,7 @@ object ZhihuCommand {
             return
         }
 
-        // For /zhihu [subscribe | unsubscribe]
+        // /zhihu [subscribe | unsubscribe]
         val (op, username) = zhihuCmd.split(' ')
         when (op) {
             // /zhihu subscribe <weibo_id>
@@ -95,7 +95,7 @@ object ZhihuCommand {
         flow.takeWhile {
             !channel.tryReceive().isSuccess
         }.collect {
-            // Answer
+            // 用户回答
             val latestAnswer = zhihuService.getZhihuLatestAnswerDate(username)
             if (latestAnswer != null) {
                 if (latestAnswer.publishedDate > lastStatusParam.answer) {
@@ -111,7 +111,7 @@ object ZhihuCommand {
                 lastStatusParam.answer = latestAnswer.publishedDate
 
             }
-            // Post
+            // 用户文章
             val latestPost = zhihuService.getZhihuLatestPostDate(username)
             if (latestPost != null) {
                 if (latestPost.publishedDate > lastStatusParam.post) {
@@ -126,8 +126,7 @@ object ZhihuCommand {
                 }
                 lastStatusParam.post = latestPost.publishedDate
             }
-
-            // Pin
+            // 用户想法
             val latestPin = zhihuService.getZhihuLatestPinDate(username)
             if (latestPin != null) {
                 if (latestPin.publishedDate > lastStatusParam.pin) {

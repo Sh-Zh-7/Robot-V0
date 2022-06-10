@@ -31,7 +31,7 @@ object WeiboCommand {
             return
         }
 
-        // For /weibo [subscribe | unsubscribe]
+        // /weibo [subscribe | unsubscribe]
         val (op, weiboIDStr) = weiboCmd.split(' ')
         val weiboID = weiboIDStr.toLong()
         when (op) {
@@ -130,7 +130,7 @@ object WeiboCommand {
         val driver = BrowserUtils.getDriver()
 
         driver.get(link)
-        TimeUnit.SECONDS.sleep(5)   // Wait until redirect done
+        TimeUnit.SECONDS.sleep(5)   // 等待页面初始的跳转
 
         val target = driver.findElement(By.cssSelector("article"))
         val screenshot = target.getScreenshotAs(OutputType.BYTES)
