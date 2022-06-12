@@ -5,10 +5,13 @@
     <a href="https://github.com/Sh-Zh-7/Robot-V0/issues" style="text-decoration:none" >
         <img src="https://img.shields.io/github/issues/Sh-Zh-7/Robot-V0?color=orange" alt="issues"/>
     </a>
+    <a href="https://github.com/SSh-Zh-7/Robot-V0" style="text-decoration:none" >
+        <img src="https://img.shields.io/github/repo-size/Sh-Zh-7/Robot-V0" alt="Size"/>
+    </a>
     <a href="https://github.com/Sh-Zh-7/Robot-V0" style="text-decoration:none" >
         <img src="https://img.shields.io/github/license/Sh-Zh-7/Robot-V0" alt="Size"/>
     </a>
-  <a href="https://github.com/Sh-Zh-7/Robot-V0" style="text-decoration:none">
+  	<a href="https://github.com/Sh-Zh-7/Robot-V0" style="text-decoration:none">
         <img src="https://img.shields.io/github/stars/Sh-Zh-7/Robot-V0?style=social" alt="Github Star"/>
     </a>
 </p>
@@ -33,12 +36,13 @@
 - [ ] 实现基于RBAC/LDAP的指令动态授权。
 - [ ] 利用RSSHub进一步扩展直播订阅功能（虎牙、斗鱼等）。
 - [ ] 使用IMDB/TMDB API支持影视信息的查阅。
-- [ ] 编写并使用一个类Spring的IOC和AOP功能自己的OneBot SDK。
+- [ ] 编写并使用一个类Spring的IOC和AOP功能子集的OneBot SDK。
+- [ ] 仿照TextQL和GitQL实现用SQL查询历史聊天记录。
 - [ ] 进行微服务的拆分，做一切云原生应用该做的事情。
 
 
 
-## 鸣谢
+# 鸣谢
 
 > [IntelliJ IDEA](https://zh.wikipedia.org/zh-hans/IntelliJ_IDEA) 是一个在各个方面都最大程度地提高开发人员的生产力的 IDE，适用于 JVM 平台语言。
 
