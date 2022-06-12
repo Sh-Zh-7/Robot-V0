@@ -57,14 +57,14 @@ class WeiboServiceImpl: WeiboService {
     }
 
     override fun getUsernameByWeiboID(weiboID: Long): String {
-        val url = "http://localhost:1200/weibo/user/$weiboID"
+        val url = "http://rsshub:1200/weibo/user/$weiboID"
         val title = RssUtils.fetchTitle(url)
 
         return title.substringBefore("的微博")
     }
 
     override fun getLatestWeiboByWeiboID(weiboID: Long): SyndEntry {
-        val url = "http://localhost:1200/weibo/user/$weiboID"
+        val url = "http://rsshub:1200/weibo/user/$weiboID"
 
         return RssUtils.fetchLatestEntry(url)
     }

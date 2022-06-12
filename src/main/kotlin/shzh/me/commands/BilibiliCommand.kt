@@ -175,7 +175,7 @@ object BilibiliDynamicCommand {
 
         // 持久化截取的图片
         val filename = UUID.randomUUID().toString()
-        val file = File("./images/bilibili/$filename.png")
+        val file = File("/tmp/images/$filename.png")
         ImageIO.write(destImage, "png", file)
 
         return file

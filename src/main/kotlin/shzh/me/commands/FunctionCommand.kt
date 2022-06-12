@@ -89,7 +89,7 @@ figcaption{font-size:1.5rem;font-style:italic}</style><body><div class="containe
         """
 
         val basename = UUID.randomUUID()
-        val filename = "temp/$basename.html"
+        val filename = "/tmp/html/$basename.html"
         val html = File(filename)
         html.writeText(template)
 
@@ -100,7 +100,7 @@ figcaption{font-size:1.5rem;font-style:italic}</style><body><div class="containe
         val screenshot = target.getScreenshotAs(OutputType.BYTES)
         val image = ImageIO.read(screenshot.inputStream())
 
-        val file = File("images/quotes/$basename.png")
+        val file = File("/tmp/images/$basename.png")
         ImageIO.write(image, "png", file)
 
         return file.canonicalPath

@@ -15,7 +15,7 @@ class NeteaseServiceImpl: NeteaseService {
     private val client = HttpClient(CIO)
 
     override suspend fun searchMusicByKeyword(keyword: String): Song {
-        val response = client.get("http://localhost:3000/search") {
+        val response = client.get("http://music:3000/search") {
             url { parameters.append("keywords", keyword) }
         }.body<String>()
 

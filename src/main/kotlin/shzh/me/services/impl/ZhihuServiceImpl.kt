@@ -74,7 +74,7 @@ class ZhihuServiceImpl: ZhihuService {
 
     override fun getZhihuLatestAnswerDate(username: String): SyndEntry? {
         return try {
-            val url = "http://localhost:1200/zhihu/people/answers/$username"
+            val url = "http://rsshub:1200/zhihu/people/answers/$username"
             RssUtils.fetchLatestEntry(url)
         } catch (e: FileNotFoundException) {
             null
@@ -83,7 +83,7 @@ class ZhihuServiceImpl: ZhihuService {
 
     override fun getZhihuLatestPostDate(username: String): SyndEntry? {
         return try {
-            val url = "http://localhost:1200/zhihu/posts/people/$username"
+            val url = "http://rsshub:1200/zhihu/posts/people/$username"
             RssUtils.fetchLatestEntry(url)
         } catch (e: FileNotFoundException) {
             null
@@ -92,7 +92,7 @@ class ZhihuServiceImpl: ZhihuService {
 
     override fun getZhihuLatestPinDate(username: String): SyndEntry? {
         return try {
-            val url = "http://localhost:1200/zhihu/people/pins/$username"
+            val url = "http://rsshub:1200/zhihu/people/pins/$username"
             RssUtils.fetchLatestEntry(url)
         } catch (e: FileNotFoundException) {
             null

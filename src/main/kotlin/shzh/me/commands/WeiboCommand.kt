@@ -138,7 +138,7 @@ object WeiboCommand {
         val image = ImageIO.read(screenshot.inputStream())
 
         val filename = UUID.randomUUID().toString()
-        val file = File("./images/weibo/$filename.png")
+        val file = File("/tmp/images/$filename.png")
         ImageIO.write(image, "png", file)
 
         return file

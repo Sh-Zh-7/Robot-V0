@@ -21,14 +21,14 @@ class OneBotServiceImpl: OneBotService {
     private val client = HttpClient(CIO)
 
     override suspend fun deleteMessage(id: String) {
-        client.post("http://localhost:5700/delete_msg") {
+        client.post("http://cq:5700/delete_msg") {
             contentType(ContentType.Application.Json)
             setBody("{\"message_id\":$id}")
         }
     }
 
     override suspend fun getMessage(id: String): MessageDTO {
-        val res = client.post("http://localhost:5700/get_msg") {
+        val res = client.post("http://cq:5700/get_msg") {
             contentType(ContentType.Application.Json)
             setBody("{\"message_id\":$id}")
         }
@@ -40,7 +40,7 @@ class OneBotServiceImpl: OneBotService {
     override suspend fun sendGroupMessage(gid: Long, message: String) {
         val body = Json.encodeToString(GroupMessageVo(gid, message))
 
-        client.post("http://localhost:5700/send_group_msg") {
+        client.post("http://cq:5700/send_group_msg") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
