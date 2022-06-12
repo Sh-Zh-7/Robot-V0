@@ -6,12 +6,13 @@ plugins {
     application
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.serialization") version "1.6.21"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "shzh.me"
 version = "0.0.1"
 application {
-    mainClass.set("shzh.me.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
@@ -34,7 +35,7 @@ dependencies {
     implementation("org.ktorm:ktorm-core:3.4.1")
     implementation("org.postgresql:postgresql:42.3.1")
     implementation("org.ktorm:ktorm-support-postgresql:3.4.1")
-    implementation("org.seleniumhq.selenium:selenium-java:4.0.0")
+    implementation("org.seleniumhq.selenium:selenium-java:4.1.4")
     implementation("com.rometools:rome:1.18.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
