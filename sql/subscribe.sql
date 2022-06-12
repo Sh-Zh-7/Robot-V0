@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS group_subscribed_bv_user(
     id SERIAL PRIMARY KEY,
     group_id INT8 NOT NULL,
     user_id INT8 NOT NULL,
-    published DATE NOT NULL
+    published INT8 NOT NULL
 );
 
 -- Github订阅用户

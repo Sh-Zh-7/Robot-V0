@@ -105,7 +105,7 @@ object GithubCommand {
     }
 
     private suspend fun polling(groupID: Long, username: String, lastParam: Date, channel: Channel<Int>) {
-        val scheduler = buildSchedule { minutes { 0 every 1 } }
+        val scheduler = buildSchedule { minutes { 0 every 5 } }
         val flow = scheduler.asFlow()
 
         var last = lastParam

@@ -12,6 +12,7 @@ import shzh.me.model.dao.GroupSubWeibo
 import shzh.me.model.dao.groupSubWeibos
 import shzh.me.services.WeiboService
 import shzh.me.utils.RssUtils
+import shzh.me.utils.TimeUtils
 import java.util.*
 
 class WeiboServiceImpl: WeiboService {
@@ -33,7 +34,7 @@ class WeiboServiceImpl: WeiboService {
                 this.groupID = groupID
                 this.weiboID = weiboID
                 this.username = username
-                this.published = published
+                this.published = TimeUtils.dateToLocalDate(published)!!
             }
             db.groupSubWeibos.add(entity)
         }
@@ -43,7 +44,7 @@ class WeiboServiceImpl: WeiboService {
         val entity = db.groupSubWeibos.find {
             (it.groupID eq groupID) and (it.weiboID eq weiboID)
         } ?: return
-        entity.published = newDate
+        entity.published = TimeUtils.dateToLocalDate(newDate)!!
         entity.flushChanges()
     }
 

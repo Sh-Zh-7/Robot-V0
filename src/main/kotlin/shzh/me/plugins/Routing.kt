@@ -47,7 +47,7 @@ fun Application.configureRouting() {
                     RepeatCommand.handle(msg)
                     HistoryCommand.recordMessage(msg)
                 }
-                "meta_event" -> println("Heartbeat package received!")
+                "meta_event" -> {}
                 else -> println("Unknown package type received!!")
            }
         }

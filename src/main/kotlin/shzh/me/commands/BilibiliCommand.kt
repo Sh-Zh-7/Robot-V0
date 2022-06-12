@@ -118,7 +118,7 @@ object BilibiliDynamicCommand {
     }
 
     private suspend fun polling(groupID: Long, userID: Long, lastParam: Long, channel: Channel<Int>) {
-        val scheduler = buildSchedule { seconds { 0 every 10 } }
+        val scheduler = buildSchedule { minutes { 0 every 5 } }
         val flow = scheduler.asFlow()
 
         var last = lastParam
@@ -268,7 +268,7 @@ object BilibiliLiveCommand {
     }
 
     private suspend fun polling(groupID: Long, liveID: Long, oldStatusParam: Int, channel: Channel<Int>) {
-        val scheduler = buildSchedule { seconds { 0 every 10 } }
+        val scheduler = buildSchedule { minutes { 0 every 1 } }
         val flow = scheduler.asFlow()
 
         var oldStatus = oldStatusParam

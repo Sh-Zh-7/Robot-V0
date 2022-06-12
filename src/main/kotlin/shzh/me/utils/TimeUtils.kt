@@ -5,8 +5,12 @@ import java.time.YearMonth
 import java.util.*
 
 object TimeUtils {
-    fun dateToLocalDate(date: Date): LocalDate {
-        return java.sql.Date(date.time).toLocalDate()
+    fun dateToLocalDate(date: Date?): LocalDate? {
+        return if (date != null) {
+            java.sql.Date(date.time).toLocalDate()
+        } else {
+            null
+        }
     }
 
     private fun isLeapYear(year: Int): Boolean {
