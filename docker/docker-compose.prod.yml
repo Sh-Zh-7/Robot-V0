@@ -1,0 +1,76 @@
+version: "3.1"
+services:
+  bot:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - shared-html:/tmp/html
+      - shared-image:/tmp/images
+    depends_on:
+      - cq
+      - db
+      - rsshub
+      - music
+      - selenium
+    environment:
+      - TZ=Asia/Shanghai
+  cq:
+    image: silicer/go-cqhttp:latest
+    restart: always
+    ports:
+      - "5700:5700"
+    volumes:
+      - ./config/cqhttp.yml:/data/config.yml
+      - ./config/device.json:/data/device.json
+      - shared-image:/tmp/images
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - /data/mysql/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: robot
+      POSTGRES_HOST_AUTH_METHOD: trust
+  rsshub:
+    image: diygod/rsshub
+    restart: always
+    ports:
+      - "1200:1200"
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      CACHE_EXPIRE: 60
+      REDIS_URL: "redis://redis:6379/"
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - /data/redis/data:/data
+  music:
+    image: binaryify/netease_cloud_music_api
+    restart: always
+    ports:
+      - "3000:3000"
+  selenium:
+    image: seleniarm/standalone-chromium
+    restart: always
+    volumes:
+      - shared-html:/tmp/html
+      - shared-image:/tmp/images
+    environment:
+      - JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps=
+    privileged: true
+    shm_size: "2gb"
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+
+volumes:
+  shared-html:
+  shared-image:
