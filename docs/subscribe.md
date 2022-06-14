@@ -14,7 +14,7 @@
 
 每当用户发布新动态（包括发布新视频和文字动态），就返回动态的浏览器截图。
 
-![bilibili_subscribe](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/bilibili_subscribe.png)
+![bilibili_subscribe](../assets/docs/bilibili_subscribe.png)
 
 
 
@@ -22,7 +22,7 @@
 
 当主播开播的时候，就返回主播的直播封面和地址。
 
-![blive_subscribe](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/blive_subscribe.png)
+![blive_subscribe](../assets/docs/blive_subscribe.png)
 
 
 
@@ -30,7 +30,7 @@
 
 当微博用户发布新动态的时候，就返回动态的浏览器截图。
 
-![weibo_subscribe](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/weibo_subscribe.png)
+![weibo_subscribe](../assets/docs/weibo_subscribe.png)
 
 
 
@@ -38,7 +38,7 @@
 
 当订阅的知乎用户发布新回答/文章/想法的时候，就返回相应的内容。
 
-![zhihu_subscribe](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/zhihu_subscribe.png)
+![zhihu_subscribe](../assets/docs/zhihu_subscribe.png)
 
 
 
@@ -46,6 +46,6 @@
 
 当订阅的Github用户创建仓库/fork仓库/star仓库的时候返回仓库的OpenGraph图片。
 
-![github_subscribe](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/github_subscribe.png)
+![github_subscribe](../assets/docs/github_subscribe.png)
 
 注意follow用户这一动态无法通过Atom订阅。

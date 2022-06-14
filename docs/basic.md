@@ -4,7 +4,7 @@
 
 这种ping-pong风格的请求与响应来自于Redis。
 
-![ping](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/ping.png)
+![ping](../assets/docs/ping.png)
 
 
 
@@ -16,7 +16,7 @@
 
 最后机器人会返回每一个骰子的结果和它们的综合，如下图所示：
 
-![dice](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/dice.png)
+![dice](../assets/docs/dice.png)
 
 注意为了防止刷屏，骰子的**数目不能超过10**，最大**点数不能超过100**。
 
@@ -28,7 +28,7 @@
 
 每当有群友提出一个feature request的时候，让机器人回复一个“你写就有了”很应景。
 
-![diy](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/diy.png)
+![diy](../assets/docs/diy.png)
 
 
 
@@ -48,7 +48,7 @@ QQ内置的历史记录查询功能只支持内容的查询，我想知道一个
 - `/find u:Sh-Zh-7`：查找用户`Sh-Zh-7`所有的发言记录；
 - `/find u:imShZh 大家好`：查找用户`imShZh`所有发言中包含“大家好”的记录。
 
-![history](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/history.png)
+![history](../assets/docs/history.png)
 
 注意为了防止刷屏，机器人**最多只返回5条**消息记录。
 
@@ -62,7 +62,7 @@ QQ内置的消息撤回有一个时间限制，超过这个时间限制就无法
 
 注意机器人必须得是管理员/群主，而且你只能撤回你自己的消息。
 
-![callback](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/callback.png)
+![callback](../assets/docs/callback.png)
 
 
 
@@ -72,7 +72,7 @@ QQ内置的消息撤回有一个时间限制，超过这个时间限制就无法
 
 比如说下图所示的计算积分的功能：
 
-![math](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/math.png)
+![math](../assets/docs/math.png)
 
 
 
@@ -82,7 +82,7 @@ QQ内置的消息撤回有一个时间限制，超过这个时间限制就无法
 
 这个功能主要依赖CQ内置的音乐转发功能。
 
-![music](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/music.png)
+![music](../assets/docs/music.png)
 
 注意在具体的实现中，机器人总是会返回第一条搜索的结果，而这个结果并不一定准确。
 
@@ -96,7 +96,7 @@ QQ内置的消息撤回有一个时间限制，超过这个时间限制就无法
 
 本项目直接通过`/progress`指令显式地查看一年的进度。
 
-![progress](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/progress.png)
+![progress](../assets/docs/progress.png)
 
 
 
@@ -104,4 +104,4 @@ QQ内置的消息撤回有一个时间限制，超过这个时间限制就无法
 
 这个功能源于推特的[makeitaquote](https://mobile.twitter.com/makeitaquote)。通过回复任意群友的言论并回复`/quote`，就获得类似如下的反馈：
 
-![quote](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/quote.png)
+![quote](../assets/docs/quote.png)

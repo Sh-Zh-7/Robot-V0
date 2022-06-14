@@ -16,7 +16,7 @@
 
 这样你就可以知道这条链接指向的视频是什么内容的了。
 
-![bilibili](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/bilibili.png)
+![bilibili](../assets/docs/bilibili.png)
 
 
 
@@ -26,4 +26,4 @@
 
 这张图片上蕴含着这条链接指向内容的各种相关信息，这样群友不用点开链接就知道是关于什么的了。
 
-![github](/Users/shzh7/IdeaProjects/Robot-V0/assets/docs/github.png)
+![github](../assets/docs/github.png)
