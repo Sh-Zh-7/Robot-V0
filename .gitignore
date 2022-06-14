@@ -51,6 +51,10 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-# Generated image folder
-images
-temp
+# Quote template
+index.html
+
+data
+
+# CQHTTP
+config/device.json
