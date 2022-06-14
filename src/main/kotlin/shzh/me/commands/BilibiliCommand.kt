@@ -3,8 +3,10 @@ package shzh.me.commands
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
 import io.ktor.server.application.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import shzh.me.model.dto.MessageDTO
@@ -150,7 +152,9 @@ object BilibiliDynamicCommand {
             val channel = Channel<Int>()
             bUsersChannels[Pair(it.groupID, it.userID)] = channel
             val (latest, _) = bilibiliDynService.getNewestPublishTimestamp(it.userID)
-            polling(it.groupID, it.userID, latest, channel)
+            GlobalScope.launch {
+                polling(it.groupID, it.userID, latest, channel)
+            }
         }
     }
 
@@ -177,6 +181,8 @@ object BilibiliDynamicCommand {
         val filename = UUID.randomUUID().toString()
         val file = File("/tmp/images/$filename.png")
         ImageIO.write(destImage, "png", file)
+
+        driver.quit()
 
         return file
     }
@@ -293,11 +299,15 @@ object BilibiliLiveCommand {
 
     suspend fun recover() {
         val streamers = bilibiliLiveService.getBLiveAllSteamers()
+        println(streamers)
         streamers.forEach {
             val channel = Channel<Int>()
             bLiveChannels[Pair(it.groupID, it.liveID)] = channel
             val status = bilibiliApiService.getBLiveRoomData(it.liveID).liveStatus
-            polling(it.groupID, it.liveID, status, channel)
+
+            GlobalScope.launch {
+                polling(it.groupID, it.liveID, status, channel)
+            }
         }
     }
 }

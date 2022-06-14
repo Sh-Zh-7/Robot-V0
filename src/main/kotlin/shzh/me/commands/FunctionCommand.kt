@@ -103,6 +103,8 @@ figcaption{font-size:1.5rem;font-style:italic}</style><body><div class="containe
         val file = File("/tmp/images/$basename.png")
         ImageIO.write(image, "png", file)
 
+        driver.quit()
+
         return file.canonicalPath
     }
 }

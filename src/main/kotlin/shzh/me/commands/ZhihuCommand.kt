@@ -3,8 +3,10 @@ package shzh.me.commands
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
 import io.ktor.server.application.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import shzh.me.model.dto.MessageDTO
 import shzh.me.services.ZhihuStatus
 import shzh.me.services.impl.OneBotServiceImpl
@@ -98,7 +100,7 @@ object ZhihuCommand {
             // 用户回答
             val latestAnswer = zhihuService.getZhihuLatestAnswerDate(username)
             if (latestAnswer != null) {
-                if (latestAnswer.publishedDate > lastStatusParam.answer) {
+                if (lastStatusParam.answer == null || latestAnswer.publishedDate > lastStatusParam.answer) {
                     zhihuService.updateZhihuAnswerDate(groupID, username, latestAnswer.publishedDate)
 
                     val rely = MessageUtils
@@ -114,7 +116,7 @@ object ZhihuCommand {
             // 用户文章
             val latestPost = zhihuService.getZhihuLatestPostDate(username)
             if (latestPost != null) {
-                if (latestPost.publishedDate > lastStatusParam.post) {
+                if (lastStatusParam.post == null || latestPost.publishedDate > lastStatusParam.post) {
                     zhihuService.updateZhihuPostDate(groupID, username, latestPost.publishedDate)
 
                     val rely = MessageUtils
@@ -129,7 +131,7 @@ object ZhihuCommand {
             // 用户想法
             val latestPin = zhihuService.getZhihuLatestPinDate(username)
             if (latestPin != null) {
-                if (latestPin.publishedDate > lastStatusParam.pin) {
+                if (lastStatusParam.pin == null || latestPin.publishedDate > lastStatusParam.pin) {
                     zhihuService.updateZhihuPinDate(groupID, username, latestPin.publishedDate)
 
                     val rely = MessageUtils
@@ -151,7 +153,9 @@ object ZhihuCommand {
             val channel = Channel<Int>()
             zhihuChannels[Pair(it.groupID, it.username)] = channel
             val status = zhihuService.getZhihuLatestDate(it.username)
-            polling(it.groupID, it.username, status, channel)
+            GlobalScope.launch {
+                polling(it.groupID, it.username, status, channel)
+            }
         }
     }
 }

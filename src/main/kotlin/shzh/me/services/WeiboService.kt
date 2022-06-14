@@ -9,7 +9,7 @@ interface WeiboService {
 
     fun getWeibosByGID(groupID: Long): List<GroupSubWeibo>
 
-    fun insertWeiboUser(groupID: Long, weiboID: Long, username: String, published: Date)
+    fun insertWeiboUser(groupID: Long, weiboID: Long, username: String, published: Date?)
 
     fun updateWeiboUser(groupID: Long, weiboID: Long, newDate: Date)
 
@@ -17,5 +17,5 @@ interface WeiboService {
 
     fun getUsernameByWeiboID(weiboID: Long): String
 
-    fun getLatestWeiboByWeiboID(weiboID: Long): SyndEntry
+    fun getLatestWeiboByWeiboID(weiboID: Long): SyndEntry?
 }

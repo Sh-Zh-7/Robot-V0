@@ -13,7 +13,6 @@ import shzh.me.db
 import shzh.me.model.dao.GroupSubGithub
 import shzh.me.model.dao.groupSubGithubs
 import shzh.me.services.GithubService
-import shzh.me.utils.TimeUtils
 import java.net.URL
 import java.util.*
 
@@ -35,7 +34,7 @@ class GithubServiceImpl: GithubService {
             val entity = GroupSubGithub {
                 this.groupID = groupID
                 this.username = username
-                this.published = TimeUtils.dateToLocalDate(published)!!
+                this.published = published.toInstant()
             }
             db.groupSubGithubs.add(entity)
         }
@@ -45,7 +44,7 @@ class GithubServiceImpl: GithubService {
         val entity = db.groupSubGithubs.find {
             (it.groupID eq groupID) and (it.username eq username)
         } ?: return
-        entity.published = TimeUtils.dateToLocalDate(newDate)!!
+        entity.published = newDate.toInstant()
         entity.flushChanges()
     }
 

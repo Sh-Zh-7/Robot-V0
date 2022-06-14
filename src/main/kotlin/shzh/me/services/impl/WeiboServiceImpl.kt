@@ -12,7 +12,7 @@ import shzh.me.model.dao.GroupSubWeibo
 import shzh.me.model.dao.groupSubWeibos
 import shzh.me.services.WeiboService
 import shzh.me.utils.RssUtils
-import shzh.me.utils.TimeUtils
+import java.io.FileNotFoundException
 import java.util.*
 
 class WeiboServiceImpl: WeiboService {
@@ -26,7 +26,7 @@ class WeiboServiceImpl: WeiboService {
             .toList()
     }
 
-    override fun insertWeiboUser(groupID: Long, weiboID: Long, username: String, published: Date) {
+    override fun insertWeiboUser(groupID: Long, weiboID: Long, username: String, published: Date?) {
         db.groupSubWeibos.find {
             (it.groupID eq groupID) and (it.weiboID eq weiboID)
         } ?: run {
@@ -34,7 +34,7 @@ class WeiboServiceImpl: WeiboService {
                 this.groupID = groupID
                 this.weiboID = weiboID
                 this.username = username
-                this.published = TimeUtils.dateToLocalDate(published)!!
+                this.published = published?.toInstant()
             }
             db.groupSubWeibos.add(entity)
         }
@@ -44,7 +44,7 @@ class WeiboServiceImpl: WeiboService {
         val entity = db.groupSubWeibos.find {
             (it.groupID eq groupID) and (it.weiboID eq weiboID)
         } ?: return
-        entity.published = TimeUtils.dateToLocalDate(newDate)!!
+        entity.published = newDate.toInstant()
         entity.flushChanges()
     }
 
@@ -64,9 +64,12 @@ class WeiboServiceImpl: WeiboService {
         return title.substringBefore("的微博")
     }
 
-    override fun getLatestWeiboByWeiboID(weiboID: Long): SyndEntry {
-        val url = "http://rsshub:1200/weibo/user/$weiboID"
-
-        return RssUtils.fetchLatestEntry(url)
+    override fun getLatestWeiboByWeiboID(weiboID: Long): SyndEntry? {
+        return try {
+            val url = "http://rsshub:1200/weibo/user/$weiboID"
+            RssUtils.fetchLatestEntry(url)
+        } catch (e: FileNotFoundException) {
+            null
+        }
     }
 }

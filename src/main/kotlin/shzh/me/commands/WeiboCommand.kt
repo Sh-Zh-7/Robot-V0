@@ -3,8 +3,10 @@ package shzh.me.commands
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
 import io.ktor.server.application.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
 import shzh.me.model.dto.MessageDTO
@@ -60,7 +62,7 @@ object WeiboCommand {
 
     private suspend fun subscribe(call: ApplicationCall, groupID: Long, weiboID: Long, messageID: Int) {
         val username = weiboService.getUsernameByWeiboID(weiboID)
-        val published = weiboService.getLatestWeiboByWeiboID(weiboID).publishedDate
+        val published = weiboService.getLatestWeiboByWeiboID(weiboID)?.publishedDate
         weiboService.insertWeiboUser(groupID, weiboID, username, published)
 
         val reply = MessageUtils
@@ -72,7 +74,7 @@ object WeiboCommand {
 
         val channel = Channel<Int>()
         val key = Pair(groupID, weiboID)
-        if (!weiboChannels.containsKey(key)) {
+        if (published != null && !weiboChannels.containsKey(key)) {
             weiboChannels[key] = channel
             polling(groupID, weiboID, published, channel)
         }
@@ -100,7 +102,7 @@ object WeiboCommand {
         }
     }
 
-    private suspend fun polling(groupID: Long, weiboID: Long, lastParam: Date, channel: Channel<Int>) {
+    private suspend fun polling(groupID: Long, weiboID: Long, lastParam: Date?, channel: Channel<Int>) {
         val scheduler = buildSchedule { minutes { 0 every 5 } }
         val flow = scheduler.asFlow()
 
@@ -109,20 +111,22 @@ object WeiboCommand {
             !channel.tryReceive().isSuccess
         }.collect {
             val latest = weiboService.getLatestWeiboByWeiboID(weiboID)
-            if (latest.publishedDate > last) {
-                weiboService.updateWeiboUser(groupID, weiboID, latest.publishedDate)
+            if (latest != null) {
+                if (last == null || latest.publishedDate > last) {
+                    weiboService.updateWeiboUser(groupID, weiboID, latest.publishedDate)
 
-                val screenshot = screenshotWeibo(latest.link)
-                val absolutePath = screenshot.canonicalPath
+                    val screenshot = screenshotWeibo(latest.link)
+                    val absolutePath = screenshot.canonicalPath
 
-                val rely = MessageUtils
-                    .builder()
-                    .image("file://$absolutePath")
-                    .text("微博用户 ${latest.author} 有新动态")
-                    .content()
-                onebotService.sendGroupMessage(groupID, rely)
+                    val rely = MessageUtils
+                        .builder()
+                        .image("file://$absolutePath")
+                        .text("微博用户 ${latest.author} 有新动态")
+                        .content()
+                    onebotService.sendGroupMessage(groupID, rely)
+                }
+                last = latest.publishedDate
             }
-            last = latest.publishedDate
         }
     }
 
@@ -140,6 +144,7 @@ object WeiboCommand {
         val filename = UUID.randomUUID().toString()
         val file = File("/tmp/images/$filename.png")
         ImageIO.write(image, "png", file)
+        driver.quit()
 
         return file
     }
@@ -150,7 +155,9 @@ object WeiboCommand {
             val channel = Channel<Int>()
             weiboChannels[Pair(it.groupID, it.weiboID)] = channel
             val latest = weiboService.getLatestWeiboByWeiboID(it.weiboID)
-            polling(it.groupID, it.weiboID, latest.publishedDate, channel)
+            GlobalScope.launch {
+                polling(it.groupID, it.weiboID, latest?.publishedDate, channel)
+            }
         }
     }
 

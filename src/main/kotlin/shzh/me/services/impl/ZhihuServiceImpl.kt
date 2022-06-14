@@ -13,7 +13,6 @@ import shzh.me.model.dao.groupSubZhihus
 import shzh.me.services.ZhihuService
 import shzh.me.services.ZhihuStatus
 import shzh.me.utils.RssUtils
-import shzh.me.utils.TimeUtils
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -35,9 +34,9 @@ class ZhihuServiceImpl: ZhihuService {
             val entity = GroupSubZhihu {
                 this.groupID = groupID
                 this.username = username
-                this.answer = TimeUtils.dateToLocalDate(answer)
-                this.post = TimeUtils.dateToLocalDate(post)
-                this.pin = TimeUtils.dateToLocalDate(pin)
+                this.answer = answer?.toInstant()
+                this.post = post?.toInstant()
+                this.pin = post?.toInstant()
             }
             db.groupSubZhihus.add(entity)
         }

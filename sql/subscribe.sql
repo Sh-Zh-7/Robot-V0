@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS group_subscribed_github(
     id SERIAL PRIMARY KEY,
     group_id INT8 NOT NULL,
     username VARCHAR(40) NOT NULL,
-    published DATE NOT NULL
+    published TIMESTAMP
 );
 
 -- 微博订阅用户
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS group_subscribed_weibo(
     group_id INT8 NOT NULL,
     weibo_id INT8 NOT NULL,
     username VARCHAR(32) NOT NULL,
-    published DATE
+    published TIMESTAMP
 );
 
 -- 知乎订阅用户
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS group_subscribed_zhihu(
     id SERIAL PRIMARY KEY,
     group_id INT8 NOT NULL,
     username VARCHAR(64) NOT NULL,
-    answer DATE,
-    post DATE,
-    pin DATE
+    answer TIMESTAMP,
+    post TIMESTAMP,
+    pin TIMESTAMP
 );

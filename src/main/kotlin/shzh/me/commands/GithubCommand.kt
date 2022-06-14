@@ -3,8 +3,10 @@ package shzh.me.commands
 import dev.inmo.krontab.builder.buildSchedule
 import dev.inmo.krontab.utils.asFlow
 import io.ktor.server.application.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import shzh.me.model.dto.MessageDTO
 import shzh.me.services.impl.GithubServiceImpl
 import shzh.me.services.impl.OneBotServiceImpl
@@ -167,7 +169,9 @@ object GithubCommand {
             val channel = Channel<Int>()
             githubChannels[Pair(it.groupID, it.username)] = channel
             val latest = githubService.getLatestDynDate(it.username)
-            polling(it.groupID, it.username, latest, channel)
+            GlobalScope.launch {
+                polling(it.groupID, it.username, latest, channel)
+            }
         }
     }
 
