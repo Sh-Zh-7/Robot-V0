@@ -7,15 +7,16 @@ import org.ktorm.schema.Table
 import org.ktorm.schema.int
 import org.ktorm.schema.long
 
-interface GroupSubBVStreamer: Entity<GroupSubBVStreamer> {
-    companion object: Entity.Factory<GroupSubBVStreamer>()
+interface GroupSubBVStreamer : Entity<GroupSubBVStreamer> {
+    companion object : Entity.Factory<GroupSubBVStreamer>()
+
     val id: Int
     var groupID: Long
     var userID: Long
     var liveID: Long
 }
 
-object GroupSubBVStreamers: Table<GroupSubBVStreamer>("group_subscribed_bv_streamer") {
+object GroupSubBVStreamers : Table<GroupSubBVStreamer>("group_subscribed_bv_streamer") {
     val id = int("id").primaryKey().bindTo { it.id }
     val groupID = long("group_id").bindTo { it.groupID }
     val userID = long("user_id").bindTo { it.userID }
@@ -24,15 +25,16 @@ object GroupSubBVStreamers: Table<GroupSubBVStreamer>("group_subscribed_bv_strea
 
 val Database.groupSubBVStreamers get() = this.sequenceOf(GroupSubBVStreamers)
 
-interface GroupSubBVUser: Entity<GroupSubBVUser> {
-    companion object: Entity.Factory<GroupSubBVUser>()
+interface GroupSubBVUser : Entity<GroupSubBVUser> {
+    companion object : Entity.Factory<GroupSubBVUser>()
+
     val id: Int
     var groupID: Long
     var userID: Long
     var published: Long
 }
 
-object GroupSubBVUsers: Table<GroupSubBVUser>("group_subscribed_bv_user") {
+object GroupSubBVUsers : Table<GroupSubBVUser>("group_subscribed_bv_user") {
     val id = int("id").primaryKey().bindTo { it.id }
     val groupID = long("group_id").bindTo { it.groupID }
     val userID = long("user_id").bindTo { it.userID }

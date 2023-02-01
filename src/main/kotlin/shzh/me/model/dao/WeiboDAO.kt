@@ -6,8 +6,9 @@ import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.*
 import java.time.Instant
 
-interface GroupSubWeibo: Entity<GroupSubWeibo> {
-    companion object: Entity.Factory<GroupSubWeibo>()
+interface GroupSubWeibo : Entity<GroupSubWeibo> {
+    companion object : Entity.Factory<GroupSubWeibo>()
+
     val id: Int
     var groupID: Long
     var weiboID: Long
@@ -15,7 +16,7 @@ interface GroupSubWeibo: Entity<GroupSubWeibo> {
     var published: Instant?
 }
 
-object GroupSubWeibos: Table<GroupSubWeibo>("group_subscribed_weibo") {
+object GroupSubWeibos : Table<GroupSubWeibo>("group_subscribed_weibo") {
     val id = int("id").primaryKey().bindTo { it.id }
     val groupID = long("group_id").bindTo { it.groupID }
     val weiboID = long("weibo_id").bindTo { it.weiboID }

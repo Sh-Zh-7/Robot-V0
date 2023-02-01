@@ -9,12 +9,20 @@ object MessageUtils {
     }
 
     fun text(content: String, newline: Boolean = true): MessageUtils {
-        this.message += content + if (newline) { "\n" } else { "" }
+        this.message += content + if (newline) {
+            "\n"
+        } else {
+            ""
+        }
         return this
     }
 
     fun image(url: String, newline: Boolean = true): MessageUtils {
-        this.message += "[CQ:image,file=$url]" + if (newline) { "\n" } else { "" }
+        this.message += "[CQ:image,file=$url]" + if (newline) {
+            "\n"
+        } else {
+            ""
+        }
         return this
     }
 

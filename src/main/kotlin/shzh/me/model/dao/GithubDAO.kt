@@ -6,8 +6,9 @@ import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.*
 import java.time.Instant
 
-interface GroupSubGithub: Entity<GroupSubGithub> {
-    companion object: Entity.Factory<GroupSubGithub>()
+interface GroupSubGithub : Entity<GroupSubGithub> {
+    companion object : Entity.Factory<GroupSubGithub>()
+
     val id: Int
     var groupID: Long
     var username: String

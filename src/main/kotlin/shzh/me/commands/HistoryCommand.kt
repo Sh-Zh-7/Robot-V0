@@ -36,7 +36,7 @@ object HistoryCommand {
         val query = historyService.searchHistoryMessage(msg.groupID, userID, text)
 
         var result = ""
-        query.forEachIndexed{ index, row ->
+        query.forEachIndexed { index, row ->
             result += "[${index + 1}] ${row[username]}: ${row[message]}\n"
         }
         val reply = MessageUtils

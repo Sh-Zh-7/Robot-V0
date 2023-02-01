@@ -8,8 +8,9 @@ import org.ktorm.schema.long
 import org.ktorm.schema.text
 import org.ktorm.schema.varchar
 
-interface GroupMessage: Entity<GroupMessage> {
-    companion object: Entity.Factory<GroupMessage>()
+interface GroupMessage : Entity<GroupMessage> {
+    companion object : Entity.Factory<GroupMessage>()
+
     val id: Long
     var groupID: Long
     var userID: Long
@@ -17,7 +18,7 @@ interface GroupMessage: Entity<GroupMessage> {
     var message: String
 }
 
-object GroupMessages: Table<GroupMessage>("group_messages") {
+object GroupMessages : Table<GroupMessage>("group_messages") {
     val id = long("id").primaryKey().bindTo { it.id }
     val groupID = long("group_id").bindTo { it.groupID }
     val userID = long("user_id").bindTo { it.userID }

@@ -113,7 +113,7 @@ object KfcCommand {
     private val registerGroups = setOf<Long>(653055440, 650197081)
     private val onebotService = OneBotServiceImpl()
 
-    object KfcWritings: Table<Nothing>("kfc_writings") {
+    object KfcWritings : Table<Nothing>("kfc_writings") {
         val id = int("id").primaryKey()
         val writing = text("writing")
     }

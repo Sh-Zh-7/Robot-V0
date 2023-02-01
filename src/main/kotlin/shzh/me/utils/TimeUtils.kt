@@ -13,6 +13,10 @@ object TimeUtils {
 
     fun getTotalDaysInYear(calendar: Calendar): Int {
         val year = calendar.get(Calendar.YEAR)
-        return if (isLeapYear(year)) { 366 } else { 365 }
+        return if (isLeapYear(year)) {
+            366
+        } else {
+            365
+        }
     }
 }

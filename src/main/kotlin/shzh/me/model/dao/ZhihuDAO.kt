@@ -6,8 +6,9 @@ import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.*
 import java.time.Instant
 
-interface GroupSubZhihu: Entity<GroupSubZhihu> {
-    companion object: Entity.Factory<GroupSubZhihu>()
+interface GroupSubZhihu : Entity<GroupSubZhihu> {
+    companion object : Entity.Factory<GroupSubZhihu>()
+
     val id: Int
     var groupID: Long
     var username: String
@@ -16,7 +17,7 @@ interface GroupSubZhihu: Entity<GroupSubZhihu> {
     var pin: Instant?
 }
 
-object GroupSubZhihus: Table<GroupSubZhihu>("group_subscribed_zhihu") {
+object GroupSubZhihus : Table<GroupSubZhihu>("group_subscribed_zhihu") {
     val id = int("id").primaryKey().bindTo { it.id }
     val groupID = long("group_id").bindTo { it.groupID }
     val username = varchar("username").bindTo { it.username }

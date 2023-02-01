@@ -39,17 +39,19 @@ fun Application.configureRouting() {
                         "https://github.com/" in msg.message -> GithubLinkCommand.handle(call, msg)
                         "https://www.bilibili.com/video/" in msg.message -> BilibiliVideoCommand.handle(call, msg)
                         Regex("${CQCodeUtils.replyPattern}\\s*撤回") matches msg.message
-                            -> CallbackCommand.handle(msg)
+                        -> CallbackCommand.handle(msg)
+
                         Regex("${CQCodeUtils.replyPattern}\\s*/quote") matches msg.message
-                            -> QuoteCommand.handle(call, msg)
+                        -> QuoteCommand.handle(call, msg)
                     }
 
                     RepeatCommand.handle(msg)
                     HistoryCommand.recordMessage(msg)
                 }
+
                 "meta_event" -> {}
                 else -> println("Unknown package type received!!")
-           }
+            }
         }
     }
 }

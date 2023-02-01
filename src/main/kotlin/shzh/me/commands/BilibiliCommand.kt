@@ -173,7 +173,8 @@ object BilibiliDynamicCommand {
         val screenshot = target.getScreenshotAs(OutputType.BYTES)
 
         // 获取子图的大小
-        val content = driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div > div.main-content"))
+        val content =
+            driver.findElement(By.cssSelector("#app > div > div.detail-content > div > div > div > div.main-content"))
         val bufferedImage = ImageIO.read(screenshot.inputStream())
         val destImage = bufferedImage.getSubimage(0, 0, target.size.width, content.size.height)
 
